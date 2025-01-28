@@ -1,23 +1,25 @@
-using System;
+using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace DefaultNamespace
 {
-	public class ScreensManager : MonoBehaviour
+
+	public class ScreensManager : NetworkBehaviour
 	{
-		[SerializeField] private ConnectionManager _connectionManager;
-		[SerializeField] private LobbyScreen _lobbyScreen;
-		
-		public static ScreensManager Instance { get; private set; }
-
-		private ScreensEnum _currentScreen;
-
 		public enum ScreensEnum
 		{
 			ConnectionScreen,
-			LobbyScreen
+			LobbyScreen,
 		}
+		
+		[SerializeField] private ConnectionManager _connectionManager;
+		[SerializeField] private LobbyScreen _lobbyScreen;
+		[SerializeField] private TMP_Text _errorText;
+		
+		public static ScreensManager Instance { get; private set; }
+		
+		private ulong _localClientId;
 
 		private void Awake()
 		{
@@ -32,8 +34,24 @@ namespace DefaultNamespace
 			NetworkManager.Singleton.OnClientConnectedCallback += SingletonOnOnClientConnectedCallback;
 		}
 
-		private void SingletonOnOnClientConnectedCallback(ulong obj)
+
+		public void DisconnectPlayerRpc()
 		{
+			if (HasAuthority)
+			{
+				_errorText.SetText($"Player {_localClientId} disconnected");
+				NetworkManager.Singleton.DisconnectClient(_localClientId);
+				NetworkManager.Singleton.Shutdown();
+			}
+		}
+
+		private void SingletonOnOnClientConnectedCallback(ulong clientId)
+		{
+			if (NetworkManager.Singleton.LocalClientId == clientId)
+			{
+				Debug.Log($"My id is {clientId}");
+			}
+			
 			var connectedClients = NetworkManager.Singleton.ConnectedClientsIds;
 			
 			_lobbyScreen.ClearPlayerNames();

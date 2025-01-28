@@ -6,6 +6,7 @@ namespace DefaultNamespace
 	public class LobbyScreen : MonoBehaviour
 	{
 		[SerializeField] private TMP_Text _playersNameText;
+		[SerializeField] private TMP_Text _systemText;
 
 		public void SetPlayerName(string name)
 		{
@@ -19,9 +20,17 @@ namespace DefaultNamespace
 			gameObject.SetActive(true);
 		}
 
-		public void Hide()
+		private void Hide()
 		{
 			gameObject.SetActive(false);
+		}
+
+		public void Disconnect()
+		{
+			ScreensManager.Instance.DisconnectPlayerRpc();
+			ScreensManager.Instance.ChangeToScreen(ScreensManager.ScreensEnum.ConnectionScreen);
+			
+			Hide();
 		}
 	}
 }
