@@ -17,6 +17,8 @@ namespace Quiz
 			_playerName.SetText(playerName);
 			
 			_kickButton.onClick.AddListener(OnKickButtonClicked);
+			
+			Debug.Log("Session player item initialized");
 		}
 
 		private void OnDestroy()

@@ -13,6 +13,8 @@ namespace Quiz
 		private ISession _activeSession;
 		private SessionEventsDispatcher _sessionEventsDispatcher;
 		private const string playerNameProperty = "playerName";
+
+		public string PlayerName { get; set; } = "unknown";
 		
 		public ISession ActiveSession
 		{
@@ -60,10 +62,9 @@ namespace Quiz
 			ActiveSession.PlayerJoined -= _sessionEventsDispatcher.OnPlayerJoined;
 		}
 
-		private async UniTask<Dictionary<string, PlayerProperty>> GetPlayerProperties()
+		private Dictionary<string, PlayerProperty> GetPlayerProperties()
 		{
-			var playerName = await AuthenticationService.Instance.GetPlayerNameAsync();
-			var playerNameProperties = new PlayerProperty(playerName, VisibilityPropertyOptions.Member);
+			var playerNameProperties = new PlayerProperty(PlayerName, VisibilityPropertyOptions.Member);
 
 			return new Dictionary<string, PlayerProperty>
 			{
@@ -73,7 +74,7 @@ namespace Quiz
 
 		public async UniTask StartSessionAsHost()
 		{
-			var playerProperties = await GetPlayerProperties();
+			var playerProperties = GetPlayerProperties();
 			
 			var options = new SessionOptions()
 			{
@@ -84,8 +85,6 @@ namespace Quiz
 
 			ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
 			
-			RegisterSessionEvents();
-			
 			Debug.Log($"Session {ActiveSession.Id} created! Join code: {ActiveSession.Code}");
 		}
 
@@ -93,9 +92,15 @@ namespace Quiz
 		{
 			try
 			{
-				ActiveSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code);
+				var playerProperties = GetPlayerProperties();
 
-				RegisterSessionEvents();
+				var joinSessionOptions = new JoinSessionOptions()
+				{
+					PlayerProperties = playerProperties
+				};
+				
+				ActiveSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code, joinSessionOptions);
+
 				Debug.Log($"Session {ActiveSession.Id} joined");
 			}
 			catch (AggregateException ae)
