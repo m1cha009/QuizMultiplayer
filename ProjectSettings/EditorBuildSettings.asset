@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Widgets/Scenes/WidgetsQuickstart.unity
-    guid: a0fbdbb6401e84847889159a46d9b002
+    path: Assets/Scenes/ConnectionLobbyScene.unity
+    guid: c9b585e35cd53f74d98c17aa6b6e3109
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0
