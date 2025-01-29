@@ -1,9 +1,9 @@
-using UnityEngine;
+using Quiz.Interfaces;
 using UnityEngine.UI;
 
 namespace Quiz
 {
-	public class CreateSession : MonoBehaviour
+	public class CreateSession : BaseSession, IPlayerNameEvents, ISessionLifecycleEvents
 	{
 		private Button _createSessionButton;
 
@@ -13,9 +13,31 @@ namespace Quiz
 			_createSessionButton.onClick.AddListener(OnCreateSessionClicked);
 		}
 
-		private void OnCreateSessionClicked()
+		private void OnDestroy()
 		{
-			SessionManager.Instance.StartSessionAsHost();
+			_createSessionButton.onClick.RemoveListener(OnCreateSessionClicked);
+		}
+
+		private async void OnCreateSessionClicked()
+		{
+			_createSessionButton.interactable = false;
+			
+			await SessionManager.Instance.StartSessionAsHost();
+		}
+
+		public void OnPlayerNameChange(string playerName)
+		{
+			_createSessionButton.interactable = !string.IsNullOrEmpty(playerName);
+		}
+
+		public void OnSessionJoined()
+		{
+			_createSessionButton.interactable = false;
+		}
+
+		public void OnSessionLeft()
+		{
+			_createSessionButton.interactable = true;
 		}
 	}
 }

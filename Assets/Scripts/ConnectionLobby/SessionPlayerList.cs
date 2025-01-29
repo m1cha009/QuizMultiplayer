@@ -18,13 +18,26 @@ namespace Quiz
 		public void OnPlayerJoined(string playerId)
 		{
 			UpdatePlayerList();
-			
-			Debug.Log("On Player joined");
+		}
+
+		public void OnPlayerLeft(string playerId)
+		{
+			RemovePLayer(playerId);
+		}
+
+		public void OnPlayerNameChange(string playerName)
+		{
+			// update player name
 		}
 
 		public void OnSessionJoined()
 		{
 			UpdatePlayerList();
+		}
+
+		public void OnSessionLeft()
+		{
+			RemoveAllPlayerList();
 		}
 
 		private void UpdatePlayerList()
@@ -54,6 +67,24 @@ namespace Quiz
 			}
 		}
 
-		
+		private void RemovePLayer(string playerId)
+		{
+			if (_sessionPlayerItems.ContainsKey(playerId))
+			{
+				Destroy(_sessionPlayerItems[playerId].gameObject);
+				
+				_sessionPlayerItems.Remove(playerId);
+			}
+		}
+
+		private void RemoveAllPlayerList()
+		{
+			foreach (var sessionPlayerItem in _sessionPlayerItems)
+			{
+				Destroy(sessionPlayerItem.Value.gameObject);
+			}
+			
+			_sessionPlayerItems.Clear();
+		}
 	}
 }

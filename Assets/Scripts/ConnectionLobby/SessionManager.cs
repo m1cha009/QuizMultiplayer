@@ -14,7 +14,7 @@ namespace Quiz
 		private SessionEventsDispatcher _sessionEventsDispatcher;
 		private const string playerNameProperty = "playerName";
 
-		public string PlayerName { get; set; } = "unknown";
+		public string PlayerName { get; set; } = string.Empty;
 		
 		public ISession ActiveSession
 		{
@@ -55,11 +55,13 @@ namespace Quiz
 		private void RegisterSessionEvents()
 		{
 			ActiveSession.PlayerJoined += _sessionEventsDispatcher.OnPlayerJoined;
+			ActiveSession.PlayerLeft += _sessionEventsDispatcher.OnPlayerLeft;
 		}
 
 		private void UnRegisterSessionEvents()
 		{
 			ActiveSession.PlayerJoined -= _sessionEventsDispatcher.OnPlayerJoined;
+			ActiveSession.PlayerLeft -= _sessionEventsDispatcher.OnPlayerLeft;
 		}
 
 		private Dictionary<string, PlayerProperty> GetPlayerProperties()
@@ -74,6 +76,7 @@ namespace Quiz
 
 		public async UniTask StartSessionAsHost()
 		{
+			Debug.Log("Creating session...");
 			var playerProperties = GetPlayerProperties();
 			
 			var options = new SessionOptions()
@@ -88,17 +91,19 @@ namespace Quiz
 			Debug.Log($"Session {ActiveSession.Id} created! Join code: {ActiveSession.Code}");
 		}
 
-		public async UniTaskVoid JoinSessionByJoinCode(string code)
+		public async UniTask JoinSessionByJoinCode(string code)
 		{
 			try
 			{
+				Debug.Log("Connecting to session...");
+
 				var playerProperties = GetPlayerProperties();
 
 				var joinSessionOptions = new JoinSessionOptions()
 				{
 					PlayerProperties = playerProperties
 				};
-				
+
 				ActiveSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code, joinSessionOptions);
 
 				Debug.Log($"Session {ActiveSession.Id} joined");
@@ -113,15 +118,26 @@ namespace Quiz
 						{
 							Debug.Log($"Invalid join code");
 						}
+						else if (sessionException.Error == SessionError.Unknown)
+						{
+							Debug.Log("Unknown. But usually timeout");
+						}
+						
+						_activeSession = null;
+						_sessionEventsDispatcher.OnSessionLeft();
+						
+						Debug.LogException(exception);
 					}
 					else
 					{
+						Debug.Log($"Inner Exception: {ae}");
 						Debug.LogException(ae);
 					}
 				}
 			}
 			catch (Exception e)
 			{
+				Debug.Log($"Exception: {e}");
 				Debug.LogException(e);
 			}
 		}
@@ -133,18 +149,18 @@ namespace Quiz
 			await ActiveSession.AsHost().RemovePlayerAsync(playerId);
 		}
 
-		public async UniTaskVoid LeaveSession()
+		public async UniTask LeaveSession()
 		{
 			if (ActiveSession != null)
 			{
+				UnRegisterSessionEvents();
 				try
 				{
-					UnRegisterSessionEvents();
 					await ActiveSession.LeaveAsync();
 				}
 				catch (Exception e)
 				{
-					Debug.LogException(e);
+					// ignored
 				}
 				finally
 				{

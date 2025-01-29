@@ -41,5 +41,10 @@ namespace Quiz
 			
 			_sessionCodeText.SetText(_sessionManager.ActiveSession.Code);
 		}
+
+		public void OnSessionLeft()
+		{
+			_sessionCodeText.SetText(string.Empty);
+		}
 	}
 }

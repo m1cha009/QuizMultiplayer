@@ -1,15 +1,15 @@
+using Quiz.Interfaces;
 using TMPro;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Quiz
 {
-	public class JoinSessionByCode : MonoBehaviour
+	public class JoinSessionByCode : BaseSession, ISessionLifecycleEvents, IPlayerNameEvents
 	{
 		private TMP_InputField _inputField;
 		private Button _joinButton;
 		
-		protected void OnEnable()
+		protected void Awake()
 		{
 			_inputField = GetComponentInChildren<TMP_InputField>();
 			_joinButton = GetComponentInChildren<Button>();
@@ -21,12 +21,30 @@ namespace Quiz
 			_joinButton.onClick.RemoveListener(OnJoinButtonClicked);
 		}
 
-		private void OnJoinButtonClicked()
+		private async void OnJoinButtonClicked()
 		{
 			if (!string.IsNullOrEmpty(_inputField.text))
 			{
-				SessionManager.Instance.JoinSessionByJoinCode(_inputField.text);
+				_joinButton.interactable = false;
+			
+				await SessionManager.Instance.JoinSessionByJoinCode(_inputField.text);
 			}
+		}
+
+		public void OnSessionJoined()
+		{
+			_joinButton.interactable = false;
+		}
+
+		public void OnSessionLeft()
+		{
+			_joinButton.interactable = true;
+		}
+
+		public void OnPlayerNameChange(string playerName)
+		{
+			_joinButton.interactable = !string.IsNullOrEmpty(playerName);
+			_inputField.interactable = !string.IsNullOrEmpty(playerName);
 		}
 	}
 }

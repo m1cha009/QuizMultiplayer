@@ -9,15 +9,24 @@ namespace Quiz
 
 		private void Awake()
 		{
-			_playerNameInput.onEndEdit.AddListener(OnEndEdit);
+			_playerNameInput.onValueChanged.AddListener(OnInputChange);
 		}
 
-		private void OnEndEdit(string text)
+		private void Start()
 		{
-			if (!string.IsNullOrEmpty(_playerNameInput.text))
-			{
-				SessionManager.Instance.PlayerName = _playerNameInput.text;
-			}
+			SessionEventsDispatcher.Instance.OnPlayerChangeName(_playerNameInput.text);
+		}
+
+		private void OnDestroy()
+		{
+			_playerNameInput.onValueChanged.RemoveListener(OnInputChange);
+		}
+
+		private void OnInputChange(string text)
+		{
+			SessionManager.Instance.PlayerName = _playerNameInput.text;
+			
+			SessionEventsDispatcher.Instance.OnPlayerChangeName(_playerNameInput.text);
 		}
 	}
 }
