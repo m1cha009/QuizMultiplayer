@@ -25,6 +25,7 @@ namespace Quiz
 			
 			await SessionManager.Instance.LeaveSession();
 			
+			SystemLogger.Log("Left server");
 			Debug.Log("Left server");
 		}
 

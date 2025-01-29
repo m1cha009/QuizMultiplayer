@@ -44,6 +44,7 @@ namespace Quiz
 				await UnityServices.InitializeAsync(); // initialize unity gaming services
 				await AuthenticationService.Instance.SignInAnonymouslyAsync();
 				
+				SystemLogger.Log($"Sign in anonymously. Player ID: {AuthenticationService.Instance.PlayerId}");
 				Debug.Log($"Sign in anonymously. Player ID: {AuthenticationService.Instance.PlayerId}");
 			}
 			catch (Exception e)
@@ -76,6 +77,7 @@ namespace Quiz
 
 		public async UniTask StartSessionAsHost()
 		{
+			SystemLogger.Log("Starting session...");
 			Debug.Log("Creating session...");
 			var playerProperties = GetPlayerProperties();
 			
@@ -88,13 +90,15 @@ namespace Quiz
 
 			ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
 			
-			Debug.Log($"Session {ActiveSession.Id} created! Join code: {ActiveSession.Code}");
+			SystemLogger.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
+			Debug.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
 		}
 
 		public async UniTask JoinSessionByJoinCode(string code)
 		{
 			try
 			{
+				SystemLogger.Log("Connecting session...");
 				Debug.Log("Connecting to session...");
 
 				var playerProperties = GetPlayerProperties();
@@ -106,7 +110,8 @@ namespace Quiz
 
 				ActiveSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code, joinSessionOptions);
 
-				Debug.Log($"Session {ActiveSession.Id} joined");
+				SystemLogger.Log($"Player {PlayerName} joined. Session; {ActiveSession.Id}");
+				Debug.Log($"Player {PlayerName} joined. Session; {ActiveSession.Id}");
 			}
 			catch (AggregateException ae)
 			{
@@ -116,20 +121,24 @@ namespace Quiz
 					{
 						if (sessionException.Error == SessionError.SessionNotFound)
 						{
+							SystemLogger.Log($"Invalid join code");
 							Debug.Log($"Invalid join code");
 						}
 						else if (sessionException.Error == SessionError.Unknown)
 						{
+							SystemLogger.Log("Unknown. But usually timeout");
 							Debug.Log("Unknown. But usually timeout");
 						}
 						
 						_activeSession = null;
 						_sessionEventsDispatcher.OnSessionLeft();
 						
+						SystemLogger.Log($"{exception.Message}");
 						Debug.LogException(exception);
 					}
 					else
 					{
+						SystemLogger.Log($"Inner Exception: {ae}");
 						Debug.Log($"Inner Exception: {ae}");
 						Debug.LogException(ae);
 					}
@@ -137,6 +146,7 @@ namespace Quiz
 			}
 			catch (Exception e)
 			{
+				SystemLogger.Log($"Exception: {e}");
 				Debug.Log($"Exception: {e}");
 				Debug.LogException(e);
 			}

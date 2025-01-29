@@ -18,10 +18,28 @@ namespace Quiz
 		public void OnPlayerJoined(string playerId)
 		{
 			UpdatePlayerList();
+			
+			var playerName = string.Empty;
+			if (_sessionPlayerItems.TryGetValue(playerId, out var sessionPlayerItem))
+			{
+				playerName = sessionPlayerItem.PlayerName;
+			}
+			
+			SystemLogger.Log($"Player {playerName} joined");
+			Debug.Log($"Player {playerName} joined");
 		}
 
 		public void OnPlayerLeft(string playerId)
 		{
+			var playerName = string.Empty;
+			if (_sessionPlayerItems.TryGetValue(playerId, out var sessionPlayerItem))
+			{
+				playerName = sessionPlayerItem.PlayerName;
+			}
+			
+			SystemLogger.Log($"Player {playerName} left");
+			Debug.Log($"Player {playerName} left");
+			
 			RemovePLayer(playerId);
 		}
 

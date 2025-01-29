@@ -11,10 +11,13 @@ namespace Quiz
 
 		private string _playerId;
 
+		public string PlayerName { get; private set; }
+
 		public void Init(string playerId, string playerName)
 		{
 			_playerId = playerId;
 			_playerName.SetText(playerName);
+			PlayerName = playerName;
 			
 			_kickButton.onClick.AddListener(OnKickButtonClicked);
 		}
