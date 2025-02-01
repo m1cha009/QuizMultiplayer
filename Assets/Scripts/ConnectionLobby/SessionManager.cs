@@ -43,7 +43,7 @@ namespace Quiz
 				
 				await UnityServices.InitializeAsync(); // initialize unity gaming services
 				await AuthenticationService.Instance.SignInAnonymouslyAsync();
-				
+
 				SystemLogger.Log($"Sign in anonymously. Player ID: {AuthenticationService.Instance.PlayerId}");
 				Debug.Log($"Sign in anonymously. Player ID: {AuthenticationService.Instance.PlayerId}");
 			}
@@ -79,19 +79,51 @@ namespace Quiz
 		{
 			SystemLogger.Log("Starting session...");
 			Debug.Log("Creating session...");
-			var playerProperties = GetPlayerProperties();
-			
-			var options = new SessionOptions()
+
+			try
 			{
-				MaxPlayers = 6,
-				PlayerProperties = playerProperties
-			}.WithDistributedAuthorityNetwork();
+				var playerProperties = GetPlayerProperties();
 
+				var options = new SessionOptions()
+				{
+					MaxPlayers = 6,
+					PlayerProperties = playerProperties
+				}.WithRelayNetwork();
+				
+				ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
 
-			ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
+				SystemLogger.Log(
+					$"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
+				Debug.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
+			}
+			catch (AggregateException ae)
+			{
+				foreach (var exception in ae.InnerExceptions)
+				{
+					if (exception is SessionException sessionException)
+					{
+						SystemLogger.Log(
+							$"SessionException [Error:{sessionException.Error}] {sessionException.Message}");
+						Debug.LogException(exception);
+					}
+					else
+					{
+						SystemLogger.Log($"AggregateException: {exception.Message}");
+						Debug.LogException(exception);
+					}
+				}
+			}
+			catch (Exception e)
+			{
+				SystemLogger.Log($"Exception: {e.Message}");
+				Debug.LogException(e);
+			}
+			finally
+			{
+				SystemLogger.Log("Server creation, Final block");
+				Debug.Log("Server creation, Final block");
+			}
 			
-			SystemLogger.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
-			Debug.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
 		}
 
 		public async UniTask JoinSessionByJoinCode(string code)
