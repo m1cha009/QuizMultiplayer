@@ -1,9 +1,8 @@
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public abstract class NetworkSingleton<T> : NetworkBehaviour where T : NetworkBehaviour
+	public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
 	{
 		public static T Instance { get; private set; }
 
@@ -11,8 +10,6 @@ namespace Quiz
 		{
 			if (Instance != null && Instance != this)
 			{
-				Debug.Log("Instance already exists");
-				
 				Destroy(this);
 			}
 			else

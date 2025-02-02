@@ -48,7 +48,7 @@ using UnityEditor;
 		private void Update()
 		{
 			// If not spawned or we don't have authority, then don't update
-			if (!IsSpawned || !HasAuthority)
+			if (!IsSpawned || !IsOwner)
 			{
 				return;
 			}
