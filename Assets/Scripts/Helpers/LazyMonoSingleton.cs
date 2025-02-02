@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public abstract class SingletonTemplate<T> : MonoBehaviour where T: MonoBehaviour
+	public abstract class LazyMonoSingleton<T> : MonoBehaviour where T: MonoBehaviour
 	{
 		private static T _instance;
 		
