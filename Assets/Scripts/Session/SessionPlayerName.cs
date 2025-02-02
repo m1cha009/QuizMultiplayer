@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerName : MonoBehaviour
+	public class SessionPlayerName : MonoBehaviour
 	{
 		[SerializeField] private TMP_InputField _playerNameInput;
 

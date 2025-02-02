@@ -1,4 +1,3 @@
-using Quiz.Interfaces;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.UI;

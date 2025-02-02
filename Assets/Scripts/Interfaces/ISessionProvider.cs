@@ -1,6 +1,6 @@
 using Unity.Services.Multiplayer;
 
-namespace Quiz.Interfaces
+namespace Quiz
 {
 	public interface ISessionProvider
 	{

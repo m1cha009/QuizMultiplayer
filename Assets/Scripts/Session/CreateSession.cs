@@ -1,4 +1,3 @@
-using Quiz.Interfaces;
 using UnityEngine.UI;
 
 namespace Quiz

@@ -1,4 +1,4 @@
-namespace Quiz.Interfaces
+namespace Quiz
 {
 	public interface IPlayerNameEvents
 	{

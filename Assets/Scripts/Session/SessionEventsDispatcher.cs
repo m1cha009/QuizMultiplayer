@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Quiz.Interfaces;
 using Unity.Services.Multiplayer;
 
 namespace Quiz

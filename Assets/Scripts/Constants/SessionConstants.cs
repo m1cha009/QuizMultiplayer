@@ -1,4 +1,4 @@
-namespace Quiz.Constants
+namespace Quiz
 {
 	public static class SessionConstants
 	{

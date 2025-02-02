@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Quiz.Constants;
-using Quiz.Interfaces;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 

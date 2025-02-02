@@ -1,4 +1,3 @@
-using Quiz.Interfaces;
 using TMPro;
 using UnityEngine.UI;
 
