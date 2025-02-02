@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class SessionManager : SingletonTemplate<SessionManager>
+	public class SessionManager : LazyMonoSingleton<SessionManager>
 	{
 		private ISession _activeSession;
 		private SessionEventsDispatcher _sessionEventsDispatcher;
@@ -19,7 +19,7 @@ namespace Quiz
 		public ISession ActiveSession
 		{
 			get => _activeSession;
-			set
+			private set
 			{
 				if (value != null)
 				{
@@ -200,7 +200,7 @@ namespace Quiz
 				{
 					await ActiveSession.LeaveAsync();
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// ignored
 				}

@@ -1,9 +1,12 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.Services.Multiplayer;
+using UnityEngine;
 
 namespace Quiz
 {
-	public class SessionEventsDispatcher : SingletonTemplate<SessionEventsDispatcher>
+	[DefaultExecutionOrder(-100)]
+	public class SessionEventsDispatcher : NetworkSingleton<SessionEventsDispatcher>
 	{
 		private readonly List<ISessionProvider> _sessionProviders = new();
 		private readonly List<ISessionLifecycleEvents> _sessionLifecycles = new();
@@ -107,6 +110,13 @@ namespace Quiz
 			}
 		}
 
-
+		[Rpc(SendTo.ClientsAndHost)]
+		public void OnPlayerReadyRpc(string playerId, bool isReady)
+		{
+			foreach (var sessionEvent in _sessionEvents)
+			{
+				sessionEvent.OnPlayerReadyTrigger(playerId, isReady);
+			}
+		}
 	}
 }

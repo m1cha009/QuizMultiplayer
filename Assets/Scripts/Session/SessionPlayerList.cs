@@ -41,9 +41,9 @@ namespace Quiz
 			RemovePLayer(playerId);
 		}
 
-		public void OnPlayerNameChange(string playerName)
+		public void OnPlayerReadyTrigger(string playerId, bool ready)
 		{
-			// update player name
+			// TODO: display that player pressed Ready
 		}
 
 		public void OnSessionJoined()

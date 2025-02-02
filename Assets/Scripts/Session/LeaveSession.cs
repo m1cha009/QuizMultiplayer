@@ -1,4 +1,3 @@
-using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -6,8 +5,6 @@ namespace Quiz
 {
 	public class LeaveSession : BaseSession, ISessionLifecycleEvents
 	{
-		public ISession Session { get; set; }
-		
 		private Button _leaveSessionButton;
 
 		private void Awake()
