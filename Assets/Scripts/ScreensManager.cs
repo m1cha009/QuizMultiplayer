@@ -19,12 +19,7 @@ namespace Quiz
 			Debug.Log($"ScreenManager: {Instance}");
 		}
 
-		public enum ScreensType
-		{
-			None = 0,
-			Lobby = 1,
-			Game = 2,
-		}
+
 
 		[Rpc(SendTo.ClientsAndHost)]
 		public void ChangeScreenRpc(ScreensType screen)

@@ -29,15 +29,11 @@ namespace Quiz
 
 		private void OnStartButtonClicked() // host button
 		{
-			Debug.Log($"OnStartButtonClicked");
-			
-			ScreensManager.Instance.ChangeScreenRpc(ScreensManager.ScreensType.Game);
+			ScreensManager.Instance.ChangeScreenRpc(ScreensType.Game);
 		}
 
 		private void OnReadyButtonClicked() // clients button
 		{
-			Debug.Log($"OnReadyButtonClicked");
-			
 			_readyButton.interactable = false;
 			
 			SessionEventsDispatcher.Instance.OnPlayerReadyRpc(Session.CurrentPlayer.Id, true);
