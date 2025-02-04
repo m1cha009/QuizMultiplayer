@@ -1,14 +1,15 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerListPanel : MonoBehaviour
+	public class PlayerListPanel : NetworkBehaviour
 	{
 		[SerializeField] private Player _playerPrefab;
 
 		private GameplayManager _gameplayManager;
-		private Dictionary<string, Player> _playerList = new();
+		private readonly Dictionary<string, Player> _playerDic = new();
 
 		private void Start()
 		{
@@ -26,7 +27,7 @@ namespace Quiz
 
 			foreach (var playerData in playersDataList)
 			{
-				if (_playerList.ContainsKey(playerData.PlayerId))
+				if (_playerDic.ContainsKey(playerData.PlayerId))
 				{
 					continue;
 				}
@@ -35,8 +36,25 @@ namespace Quiz
 				player.SetName(playerData.PlayerName);
 				player.SetAnswer(playerData.Answer);
 				
-				_playerList.Add(playerData.PlayerId, player);
+				_playerDic.Add(playerData.PlayerId, player);
+				
+				Debug.Log($"Instantiated playerID: {playerData.PlayerId}");
 			}
+		}
+
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetPlayerAnswerRpc(string playerId, string answer)
+		{
+			if (_playerDic.Count == 0 || !_playerDic.ContainsKey(playerId))
+			{
+				Debug.Log($"Player {playerId} not found");
+				
+				return;
+			}
+
+
+			_playerDic.TryGetValue(playerId, out var player);
+			if (player != null) player.SetAnswer(answer);
 		}
 	}
 }

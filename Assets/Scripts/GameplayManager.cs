@@ -6,12 +6,13 @@ namespace Quiz
 {
 	public class GameplayManager : MonoSingleton<GameplayManager>, ISessionProvider, IBaseSession
 	{
+		public ISession Session { get; set; }
+		public string CurrentPlayerId => Session.CurrentPlayer.Id;
+		
 		private void OnEnable()
 		{
 			SessionEventsDispatcher.Instance.RegisterBaseClassEvents(this);
 		}
-
-		public ISession Session { get; set; }
 
 		public List<PlayerData> GetPlayersData()
 		{
@@ -19,7 +20,6 @@ namespace Quiz
 			{
 				SystemLogger.Log("Session is null");
 				Debug.Log("Session is null");
-				
 				return null;
 			}
 
