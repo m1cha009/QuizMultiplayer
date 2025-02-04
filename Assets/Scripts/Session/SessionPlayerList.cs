@@ -7,19 +7,19 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public struct PlayerData : INetworkSerializeByMemcpy, IEquatable<PlayerData>
+	public struct PlayerReadyStruct : INetworkSerializeByMemcpy, IEquatable<PlayerReadyStruct>
 	{
 		public FixedString32Bytes PlayerId;
 		public bool IsReady;
 
-		public bool Equals(PlayerData other)
+		public bool Equals(PlayerReadyStruct other)
 		{
 			return PlayerId == other.PlayerId && IsReady == other.IsReady;
 		}
 
 		public override bool Equals(object obj)
 		{
-			return obj is PlayerData other && Equals(other);
+			return obj is PlayerReadyStruct other && Equals(other);
 		}
 
 		public override int GetHashCode()
@@ -34,13 +34,13 @@ namespace Quiz
 		[SerializeField] private Transform _parentTransform;
 		
 		private readonly Dictionary<string, SessionPlayerItem> _sessionPlayerItems = new();
-		private NetworkList<PlayerData> _playersReadyState;
+		private NetworkList<PlayerReadyStruct> _playersReadyState;
 
 		public ISession Session { get; set; }
 
 		private void Awake()
 		{
-			_playersReadyState = new NetworkList<PlayerData>();
+			_playersReadyState = new NetworkList<PlayerReadyStruct>();
 		}
 
 		public override void OnNetworkSpawn()
@@ -84,7 +84,7 @@ namespace Quiz
 
 				if (Session.IsHost)
 				{
-					_playersReadyState.Add(new PlayerData {PlayerId = playerId, IsReady = ready});
+					_playersReadyState.Add(new PlayerReadyStruct {PlayerId = playerId, IsReady = ready});
 				}
 			}
 		}
