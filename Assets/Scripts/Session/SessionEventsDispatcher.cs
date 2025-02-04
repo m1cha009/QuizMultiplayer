@@ -80,6 +80,8 @@ namespace Quiz
 		
 		public void OnSessionLeft()
 		{
+			_currentSession = null;
+			
 			foreach (var sessionLifecycle in _sessionLifecycles)
 			{
 				sessionLifecycle.OnSessionLeft();
@@ -100,6 +102,16 @@ namespace Quiz
 			{
 				sessionEvent.OnPlayerLeft(playerId);
 			}
+		}
+
+		public void OnSessionDeleted()
+		{
+			foreach (var sessionEvent in _sessionEvents)
+			{
+				sessionEvent.OnSessionDeleted();
+			}
+			
+			SystemLogger.Log("Session deleted");
 		}
 
 		public void OnPlayerChangeName(string newName)

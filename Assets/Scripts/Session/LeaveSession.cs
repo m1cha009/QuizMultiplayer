@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,7 +13,12 @@ namespace Quiz
 			_leaveSessionButton = GetComponentInChildren<Button>();
 			_leaveSessionButton.onClick.AddListener(OnLeaveSessionClicked);
 
-			_leaveSessionButton.interactable = false;
+			DefaultState();
+		}
+
+		private void OnDestroy()
+		{
+			_leaveSessionButton.onClick.RemoveListener(OnLeaveSessionClicked);
 		}
 
 		private async void OnLeaveSessionClicked()
@@ -31,6 +37,11 @@ namespace Quiz
 		}
 
 		public void OnSessionLeft()
+		{
+			DefaultState();
+		}
+
+		private void DefaultState()
 		{
 			_leaveSessionButton.interactable = false;
 		}

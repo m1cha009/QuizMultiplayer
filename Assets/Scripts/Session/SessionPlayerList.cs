@@ -43,7 +43,18 @@ namespace Quiz
 
 		public void OnPlayerReadyTrigger(string playerId, bool ready)
 		{
-			// TODO: display that player pressed Ready
+			if (_sessionPlayerItems.TryGetValue(playerId, out var sessionPlayerItem))
+			{
+				sessionPlayerItem.SetReady(ready);
+			}
+		}
+
+		public void OnSessionDeleted()
+		{
+			Debug.Log("OnSessionDeleted");
+			SystemLogger.Log("OnSessionDeleted");
+			
+			RemoveAllPlayerList();
 		}
 
 		public void OnSessionJoined()

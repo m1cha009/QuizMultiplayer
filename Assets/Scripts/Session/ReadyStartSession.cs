@@ -19,6 +19,9 @@ namespace Quiz
 		{
 			_startButton.gameObject.SetActive(false);
 			_readyButton.gameObject.SetActive(false);
+			
+			_startButton.onClick.AddListener(OnStartButtonClicked);
+			_readyButton.onClick.AddListener(OnReadyButtonClicked);
 		}
 
 		private void OnDestroy()
@@ -41,20 +44,19 @@ namespace Quiz
 
 		public void OnSessionJoined()
 		{
-			if (!_readyPlayerList.TryAdd(Session.CurrentPlayer.Id, false))
-			{
-				SystemLogger.Log($"Error: Player {Session.CurrentPlayer.Id} is in readyPlayerList");
-			}
-
 			if (Session.IsHost)
 			{
-				_startButton.onClick.AddListener(OnStartButtonClicked);
-				_startButton.interactable = false;
+				_readyPlayerList.Clear();
+				
+				if (!_readyPlayerList.TryAdd(Session.CurrentPlayer.Id, false))
+				{
+					SystemLogger.Log($"Error: Player {Session.CurrentPlayer.Id} is in readyPlayerList");
+				}
+				
 				_startButton.gameObject.SetActive(true);
 			}
 			else
 			{
-				_readyButton.onClick.AddListener(OnReadyButtonClicked);
 				_readyButton.interactable = true;
 				_readyButton.gameObject.SetActive(true);
 			}
@@ -62,10 +64,23 @@ namespace Quiz
 
 		public void OnSessionLeft()
 		{
+			DefaultState();
+		}
+		
+		public void OnSessionDeleted()
+		{
+			if (Session.IsHost)
+			{
+				_readyPlayerList.Remove(Session.CurrentPlayer.Id);
+			}
+
+			DefaultState();
 		}
 
 		public void OnPlayerJoined(string playerId)
 		{
+			if (!Session.IsHost) return;
+			
 			if (!_readyPlayerList.TryAdd(playerId, false))
 			{
 				SystemLogger.Log($"Error: Player {playerId} is in readyPlayerList");
@@ -74,6 +89,8 @@ namespace Quiz
 
 		public void OnPlayerLeft(string playerId)
 		{
+			if (!Session.IsHost) return;
+			
 			_readyPlayerList.Remove(playerId);
 			
 			TriggerStartButton();
@@ -81,6 +98,8 @@ namespace Quiz
 
 		public void OnPlayerReadyTrigger(string playerId, bool isReady)
 		{
+			if (!Session.IsHost) return;
+			
 			_readyPlayerList[playerId] = isReady;
 
 			TriggerStartButton();
@@ -95,6 +114,14 @@ namespace Quiz
 				.All( ready => ready.Value == true) && _readyPlayerList.Count > 1;
 
 			_startButton.interactable = allReady;
+		}
+
+		private void DefaultState()
+		{
+			_startButton.gameObject.SetActive(false);
+			_readyButton.gameObject.SetActive(false);
+			_startButton.interactable = false;
+			_readyButton.interactable = false;
 		}
 	}
 }

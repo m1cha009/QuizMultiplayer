@@ -15,11 +15,7 @@ namespace Quiz
 			_currentScreen = _lobbyScreen;
 			
 			_gameScreen.SetActive(false);
-			
-			Debug.Log($"ScreenManager: {Instance}");
 		}
-
-
 
 		[Rpc(SendTo.ClientsAndHost)]
 		public void ChangeScreenRpc(ScreensType screen)

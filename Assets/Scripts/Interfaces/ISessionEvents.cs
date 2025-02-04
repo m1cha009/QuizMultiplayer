@@ -6,5 +6,7 @@ namespace Quiz
 		public void OnPlayerLeft(string playerId);
 		
 		public void OnPlayerReadyTrigger(string playerId, bool isReady);
+
+		public void OnSessionDeleted();
 	}
 }

@@ -57,12 +57,14 @@ namespace Quiz
 		{
 			ActiveSession.PlayerJoined += _sessionEventsDispatcher.OnPlayerJoined;
 			ActiveSession.PlayerLeft += _sessionEventsDispatcher.OnPlayerLeft;
+			ActiveSession.Deleted += _sessionEventsDispatcher.OnSessionDeleted;
 		}
 
 		private void UnRegisterSessionEvents()
 		{
 			ActiveSession.PlayerJoined -= _sessionEventsDispatcher.OnPlayerJoined;
 			ActiveSession.PlayerLeft -= _sessionEventsDispatcher.OnPlayerLeft;
+			ActiveSession.Deleted -= _sessionEventsDispatcher.OnSessionDeleted;
 		}
 
 		private Dictionary<string, PlayerProperty> GetPlayerProperties()
@@ -91,7 +93,7 @@ namespace Quiz
 				}.WithRelayNetwork();
 				
 				ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
-
+				
 				SystemLogger.Log(
 					$"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
 				Debug.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
@@ -118,12 +120,6 @@ namespace Quiz
 				SystemLogger.Log($"Exception: {e.Message}");
 				Debug.LogException(e);
 			}
-			finally
-			{
-				SystemLogger.Log("Server creation, Final block");
-				Debug.Log("Server creation, Final block");
-			}
-			
 		}
 
 		public async UniTask JoinSessionByJoinCode(string code)
@@ -198,6 +194,15 @@ namespace Quiz
 				UnRegisterSessionEvents();
 				try
 				{
+					if (ActiveSession.IsHost)
+					{
+						await ActiveSession.AsHost().DeleteAsync();
+					}
+					else
+					{
+						await ActiveSession.LeaveAsync();
+					}
+					
 					await ActiveSession.LeaveAsync();
 				}
 				catch (Exception)

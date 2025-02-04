@@ -8,6 +8,7 @@ namespace Quiz
 	{
 		[SerializeField] private TMP_Text _playerName;
 		[SerializeField] private Button _kickButton;
+		[SerializeField] private TMP_Text _readyText;
 
 		private string _playerId;
 
@@ -17,9 +18,15 @@ namespace Quiz
 		{
 			_playerId = playerId;
 			_playerName.SetText(playerName);
+			_readyText.SetText("Not Ready");
 			PlayerName = playerName;
 			
 			_kickButton.onClick.AddListener(OnKickButtonClicked);
+		}
+
+		public void SetReady(bool isReady)
+		{
+			_readyText.SetText(isReady ? "Ready" : "Not Ready");
 		}
 
 		private void OnDestroy()
