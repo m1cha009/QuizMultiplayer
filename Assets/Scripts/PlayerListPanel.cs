@@ -8,17 +8,11 @@ namespace Quiz
 	{
 		[SerializeField] private Player _playerPrefab;
 
-		private GameplayManager _gameplayManager;
 		private readonly Dictionary<string, Player> _playerDic = new();
-
-		private void Start()
-		{
-			_gameplayManager = GameplayManager.Instance;
-		}
 
 		public void InitializePlayers()
 		{
-			var playersDataList = _gameplayManager.GetPlayersData();
+			var playersDataList = GameplayManager.Instance.GetPlayersData();
 
 			if (playersDataList == null)
 			{
@@ -42,7 +36,7 @@ namespace Quiz
 			}
 		}
 
-		[Rpc(SendTo.ClientsAndHost)]
+		[Rpc(SendTo.Server)]
 		public void SetPlayerAnswerRpc(string playerId, string answer)
 		{
 			if (_playerDic.Count == 0 || !_playerDic.ContainsKey(playerId))
@@ -51,7 +45,6 @@ namespace Quiz
 				
 				return;
 			}
-
 
 			_playerDic.TryGetValue(playerId, out var player);
 			if (player != null) player.SetAnswer(answer);

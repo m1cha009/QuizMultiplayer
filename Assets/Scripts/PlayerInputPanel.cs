@@ -1,10 +1,9 @@
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerInputPanel : NetworkBehaviour
+	public class PlayerInputPanel : MonoBehaviour
 	{
 		[SerializeField] private TMP_InputField _inputField;
 		[SerializeField] private PlayerListPanel _playerListPanel;
@@ -12,8 +11,6 @@ namespace Quiz
 		private void Awake()
 		{
 			_inputField.onEndEdit.AddListener(OnEndEdit);
-			
-			TestRpc();
 		}
 
 		private void OnEndEdit(string text)
@@ -25,12 +22,6 @@ namespace Quiz
 			Debug.Log($"Current PlayerId {playerId}");
 			
 			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
-		}
-
-		[Rpc(SendTo.Server)]
-		private void TestRpc()
-		{
-			Debug.Log("sending to server");
 		}
 	}
 }
