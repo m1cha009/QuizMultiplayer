@@ -15,7 +15,7 @@ namespace Quiz
 		
 		private ISession _currentSession;
 		
-		public void RegisterBaseClassEvents(BaseSession baseSession)
+		public void RegisterBaseClassEvents(IBaseSession baseSession)
 		{
 			if (baseSession is ISessionProvider sessionProvider)
 			{
@@ -40,7 +40,7 @@ namespace Quiz
 
 		}
 		
-		public void UnRegisterBaseClassEvents(BaseSession baseSession)
+		public void UnRegisterBaseClassEvents(IBaseSession baseSession)
 		{
 			if (baseSession is ISessionProvider sessionProvider)
 			{

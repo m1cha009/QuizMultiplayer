@@ -1,8 +1,8 @@
-using UnityEngine;
+using Unity.Netcode;
 
 namespace Quiz
 {
-	public abstract class BaseSession : MonoBehaviour, IBaseSession
+	public abstract class NetworkBaseSession : NetworkBehaviour, IBaseSession
 	{
 		protected virtual void OnEnable()
 		{
