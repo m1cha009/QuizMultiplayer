@@ -956,7 +956,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerListPanel: {fileID: 201188449}
-  _questionsPanel: {fileID: 302186704}
 --- !u!1 &159294631
 GameObject:
   m_ObjectHideFlags: 0
@@ -7397,6 +7396,7 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   _playerListPanel: {fileID: 201188449}
   _questionsPanel: {fileID: 302186704}
+  _questionsPool: {fileID: 11400000, guid: 897f2bacee7ef604cb725e5cc4caee22, type: 2}
 --- !u!114 &1951519888
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8078,8 +8078,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1156732611}
   m_HandleRect: {fileID: 1156732610}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 0.9999999
+  m_Value: 0
+  m_Size: 0.99999994
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

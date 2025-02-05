@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Quiz.SO;
 using Unity.Netcode;
 using Unity.Services.Multiplayer;
 using UnityEngine;
@@ -9,16 +11,21 @@ namespace Quiz
 	{
 		[SerializeField] private PlayerListPanel _playerListPanel;
 		[SerializeField] private QuestionsPanel _questionsPanel;
+		[SerializeField] private QuestionPoolSo _questionsPool;
 
-		private readonly int _countdownDuration = 30;
+		private readonly int _countdownDuration = 5;
 		private readonly NetworkVariable<int> _serverTimeLeft = new ();
 		private readonly float _syncInterval = 1f;
 		private float _lastSyncTime;
 		private float _localTimeLeft;
+
+		public event Action OnQuestionTimeElapsed;
+		
 		
 		public bool TimerInitialized { get; set; }
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
+		public int TotalQuestionsAmount => _questionsPool.QuestionPool.Count;
 		
 		private void OnEnable()
 		{
@@ -102,6 +109,19 @@ namespace Quiz
 					_serverTimeLeft.Value = Mathf.FloorToInt(_localTimeLeft); // it is going to call OnTimerValueChanged
 				}
 			}
+			else
+			{
+				OnQuestionTimeElapsed?.Invoke();
+			}
+		}
+		
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetupNextQuestionRpc(int questionIndex)
+		{
+			var question = _questionsPool.QuestionPool[questionIndex].Question;
+			
+			_questionsPanel.DisplayQuestion(questionIndex, question);
+			_localTimeLeft = _countdownDuration;
 		}
 	}
 }

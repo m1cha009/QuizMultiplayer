@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -11,14 +12,33 @@ namespace Quiz
 
 		private int _totalQuestions;
 		private float _timeElapsed;
+		private int _questionIndex = 0;
+		private GameplayManager _gameplayManager;
 
-		public void InitializeQuestions(int totalQuestions)
+		public void OnEnable()
 		{
-			_totalQuestions = totalQuestions;
+			if (_gameplayManager == null)
+			{
+				_gameplayManager = GameplayManager.Instance;
+			}
 			
-			GameplayManager.Instance.TimerInitialized = true;
+			_gameplayManager.TimerInitialized = true;
+			_totalQuestions = _gameplayManager.TotalQuestionsAmount;
+
+			OnQuestionTimeElapsed();
 			
-			SetTotalQuestions(totalQuestions);
+			_gameplayManager.OnQuestionTimeElapsed += OnQuestionTimeElapsed;
+		}
+
+		private void OnDisable()
+		{
+			_gameplayManager.OnQuestionTimeElapsed -= OnQuestionTimeElapsed;
+		}
+
+		private void OnQuestionTimeElapsed()
+		{
+			GameplayManager.Instance.SetupNextQuestionRpc(_questionIndex);
+			_questionIndex = (_questionIndex + 1) % _totalQuestions;
 		}
 
 		public void SetTimer(int time)
@@ -26,14 +46,9 @@ namespace Quiz
 			_timerText.SetText($"{time:F0} sec");
 		}
 
-		public void SetTotalQuestions(int totalQuestions)
-		{
-			_totalQuestions = totalQuestions;
-		}
-
 		public void DisplayQuestion(int questionNumber, string question)
 		{
-			_amountText.SetText($"{questionNumber} / {_totalQuestions}");
+			_amountText.SetText($"{questionNumber + 1} / {_totalQuestions}");
 			_questionText.SetText($"{question}");
 		}
 	}
