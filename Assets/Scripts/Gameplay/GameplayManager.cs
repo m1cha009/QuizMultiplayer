@@ -11,12 +11,12 @@ namespace Quiz
 		[SerializeField] private QuestionsPanel _questionsPanel;
 
 		private readonly int _countdownDuration = 30;
-		private NetworkVariable<int> _serverTimeLeft = new ();
+		private readonly NetworkVariable<int> _serverTimeLeft = new ();
 		private readonly float _syncInterval = 1f;
 		private float _lastSyncTime;
 		private float _localTimeLeft;
-		private bool _timerInitialized;
 		
+		public bool TimerInitialized { get; set; }
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
 		
@@ -36,14 +36,12 @@ namespace Quiz
 			
 			_localTimeLeft = _countdownDuration;
 			_serverTimeLeft.OnValueChanged += OnTimerValueChanged;
-			
-			_timerInitialized = true;
 		}
 
 		public override void OnNetworkDespawn()
 		{
 			_serverTimeLeft.OnValueChanged -= OnTimerValueChanged;
-			_timerInitialized = false;
+			TimerInitialized = false;
 			
 			base.OnNetworkDespawn();
 		}
@@ -55,7 +53,7 @@ namespace Quiz
 
 		private void Update()
 		{
-			if (!IsServer || !_timerInitialized) return;
+			if (!IsServer || !TimerInitialized) return;
 
 			CalculateQuestionTimeLeft();
 		}

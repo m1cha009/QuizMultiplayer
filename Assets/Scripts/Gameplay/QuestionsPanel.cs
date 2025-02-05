@@ -16,6 +16,8 @@ namespace Quiz
 		{
 			_totalQuestions = totalQuestions;
 			
+			GameplayManager.Instance.TimerInitialized = true;
+			
 			SetTotalQuestions(totalQuestions);
 		}
 
