@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 using UnityEngine.UI;
@@ -30,9 +31,11 @@ namespace Quiz
 			ScreensManager.Instance.ChangeScreenRpc(ScreensType.Game);
 		}
 
-		private void OnReadyButtonClicked() // clients button
+		private async void OnReadyButtonClicked() // clients button
 		{
 			_readyButton.interactable = false;
+
+			await Task.Delay(1000);
 			
 			SessionEventsDispatcher.Instance.OnPlayerReadyRpc(Session.CurrentPlayer.Id, true);
 		}
