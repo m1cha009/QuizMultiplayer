@@ -14,7 +14,7 @@ namespace Quiz
 
 		private void Start()
 		{
-			_currentScreen = LocalChangeScreenRpc(_defaultScreen);
+			_currentScreen = GetScreen(_defaultScreen);
 			_currentScreen.Enable();
 		}
 
@@ -38,7 +38,7 @@ namespace Quiz
 			}
 		}
 
-		private GameScreenFactory LocalChangeScreenRpc(ScreensType screen)
+		private GameScreenFactory GetScreen(ScreensType screen)
 		{
 			switch (screen)
 			{

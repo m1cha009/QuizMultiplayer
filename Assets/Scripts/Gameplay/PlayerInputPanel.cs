@@ -22,7 +22,8 @@ namespace Quiz
 		{
 			var playerId = GameplayManager.Instance.CurrentPlayerId;
 			
-			GameplayManager.Instance.SetAnswerRpc(playerId, text);
+			// GameplayManager.Instance.SetAnswerRpc(playerId, text);
+			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
 		}
 	}
 }

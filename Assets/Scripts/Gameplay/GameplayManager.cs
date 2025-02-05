@@ -7,11 +7,22 @@ using UnityEngine;
 
 namespace Quiz
 {
+	public interface IGameplayBaseEvents
+	{
+	}
+
+	public interface IGameplayLifecycleEvents
+	{
+		void OnGameplayInitialized();
+		void OnGameplayDeInitialized();
+	}
+
 	public class GameplayManager : NetworkSingleton<GameplayManager>, ISessionProvider, IBaseSession
 	{
 		[SerializeField] private PlayerListPanel _playerListPanel;
 		[SerializeField] private QuestionsPanel _questionsPanel;
 		[SerializeField] private QuestionPoolSo _questionsPool;
+
 
 		private readonly int _countdownDuration = 5;
 		private readonly NetworkVariable<int> _serverTimeLeft = new ();
@@ -23,6 +34,7 @@ namespace Quiz
 		
 		
 		public bool TimerInitialized { get; set; }
+
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
 		public int TotalQuestionsAmount => _questionsPool.QuestionPool.Count;
@@ -35,6 +47,8 @@ namespace Quiz
 		public override void OnNetworkSpawn()
 		{
 			base.OnNetworkSpawn();
+			
+			// GameplayEventDispatcher.Instance.OnGameplayInitialized();
 
 			if (IsServer)
 			{
@@ -47,6 +61,8 @@ namespace Quiz
 
 		public override void OnNetworkDespawn()
 		{
+			// GameplayEventDispatcher.Instance.OnGameplayDeInitialized();
+			
 			_serverTimeLeft.OnValueChanged -= OnTimerValueChanged;
 			TimerInitialized = false;
 			
@@ -55,7 +71,7 @@ namespace Quiz
 
 		private void OnTimerValueChanged(int previousValue, int newValue)
 		{
-			_questionsPanel.SetTimer(newValue);
+			// _questionsPanel.SetTimer(newValue);
 		}
 
 		private void Update()
@@ -94,7 +110,7 @@ namespace Quiz
 		[Rpc(SendTo.ClientsAndHost)]
 		public void SetAnswerRpc(string playerId, string answer)
 		{
-			_playerListPanel.SetPlayerAnswer(playerId, answer);
+			_playerListPanel.SetPlayerAnswerRpc(playerId, answer);
 		}
 
 		private void CalculateQuestionTimeLeft()
@@ -123,5 +139,7 @@ namespace Quiz
 			_questionsPanel.DisplayQuestion(questionIndex, question);
 			_localTimeLeft = _countdownDuration;
 		}
+
+
 	}
 }

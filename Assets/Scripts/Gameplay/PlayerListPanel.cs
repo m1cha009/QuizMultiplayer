@@ -1,15 +1,31 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerListPanel : MonoBehaviour
+	public class PlayerListPanel : NetworkBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
 	{
 		[SerializeField] private Player _playerPrefab;
 
 		private readonly Dictionary<string, Player> _playerDic = new();
 
-		public void InitializePlayers()
+		private void Start()
+		{
+			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
+		}
+		
+		public void OnGameplayInitialized()
+		{
+			InitializePlayers();
+		}
+
+		public void OnGameplayDeInitialized()
+		{
+			// throw new System.NotImplementedException();
+		}
+
+		private void InitializePlayers()
 		{
 			var playersDataList = GameplayManager.Instance.GetPlayersData();
 
@@ -33,7 +49,8 @@ namespace Quiz
 			}
 		}
 
-		public void SetPlayerAnswer(string playerId, string answer)
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetPlayerAnswerRpc(string playerId, string answer)
 		{
 			if (_playerDic.Count == 0 || !_playerDic.ContainsKey(playerId))
 			{
@@ -45,5 +62,7 @@ namespace Quiz
 			_playerDic.TryGetValue(playerId, out var player);
 			if (player != null) player.SetAnswer(answer);
 		}
+
+		
 	}
 }
