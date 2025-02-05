@@ -13,6 +13,11 @@ namespace Quiz
 			_inputField.onEndEdit.AddListener(OnEndEdit);
 		}
 
+		private void OnDestroy()
+		{
+			_inputField.onEndEdit.RemoveListener(OnEndEdit);
+		}
+
 		private void OnEndEdit(string text)
 		{
 			var playerId = GameplayManager.Instance.CurrentPlayerId;

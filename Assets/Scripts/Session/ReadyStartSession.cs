@@ -17,17 +17,12 @@ namespace Quiz
 
 		private void Awake()
 		{
-			_startButton.gameObject.SetActive(false);
-			_readyButton.gameObject.SetActive(false);
-			
-			_startButton.onClick.AddListener(OnStartButtonClicked);
-			_readyButton.onClick.AddListener(OnReadyButtonClicked);
+			DefaultState();
 		}
 
 		private void OnDestroy()
 		{
-			_startButton.onClick.RemoveListener(OnStartButtonClicked);
-			_readyButton.onClick.RemoveListener(OnReadyButtonClicked);
+			DefaultState();
 		}
 
 		private void OnStartButtonClicked() // host button
@@ -54,11 +49,13 @@ namespace Quiz
 				}
 				
 				_startButton.gameObject.SetActive(true);
+				_startButton.onClick.AddListener(OnStartButtonClicked);
 			}
 			else
 			{
 				_readyButton.interactable = true;
 				_readyButton.gameObject.SetActive(true);
+				_readyButton.onClick.AddListener(OnReadyButtonClicked);
 			}
 		}
 
@@ -99,7 +96,7 @@ namespace Quiz
 		public void OnPlayerReadyTrigger(string playerId, bool isReady)
 		{
 			if (!Session.IsHost) return;
-			
+
 			_readyPlayerList[playerId] = isReady;
 
 			TriggerStartButton();
@@ -118,10 +115,12 @@ namespace Quiz
 
 		private void DefaultState()
 		{
-			_startButton.gameObject.SetActive(false);
-			_readyButton.gameObject.SetActive(false);
+			_startButton.onClick.RemoveListener(OnStartButtonClicked);
+			_readyButton.onClick.RemoveListener(OnReadyButtonClicked);
 			_startButton.interactable = false;
 			_readyButton.interactable = false;
+			_startButton.gameObject.SetActive(false);
+			_readyButton.gameObject.SetActive(false);
 		}
 	}
 }

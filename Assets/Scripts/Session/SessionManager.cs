@@ -138,8 +138,8 @@ namespace Quiz
 
 				ActiveSession = await MultiplayerService.Instance.JoinSessionByCodeAsync(code, joinSessionOptions);
 
-				SystemLogger.Log($"Player {PlayerName} joined. Session; {ActiveSession.Id}");
-				Debug.Log($"Player {PlayerName} joined. Session; {ActiveSession.Id}");
+				SystemLogger.Log($"Player {PlayerName} joined. SessionID: {ActiveSession.Id}");
+				Debug.Log($"Player {PlayerName} joined. SessionID: {ActiveSession.Id}");
 			}
 			catch (AggregateException ae)
 			{
