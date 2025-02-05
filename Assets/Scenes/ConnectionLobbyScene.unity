@@ -1080,8 +1080,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 201188447}
-  - component: {fileID: 201188449}
   - component: {fileID: 201188448}
+  - component: {fileID: 201188449}
   m_Layer: 5
   m_Name: PlayerListPanel
   m_TagString: Untagged
@@ -1146,7 +1146,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6024ddce5ee4b1da5ebe2996fa11c18, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
   _playerPrefab: {fileID: 7976543272938987026, guid: 80bd41a2be7081f43be2f698fe0ea2cd, type: 3}
 --- !u!1 &205090972
 GameObject:
@@ -3843,7 +3842,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1080261832}
-    PlayerPrefab: {fileID: 7271567928009402329, guid: 18cbfb3ad4711524ea9129b84806bade, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 6dbafe037b2913140a257e092c31acd0, type: 2}
@@ -6953,6 +6952,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1951519886}
+  - component: {fileID: 1951519888}
   - component: {fileID: 1951519887}
   m_Layer: 0
   m_Name: GameplayManager
@@ -6988,6 +6988,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: deaeb7d9c4b44f34803ef74975977cee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _playerListPanel: {fileID: 201188449}
+--- !u!114 &1951519888
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951519883}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 683539036
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!1 &1956427793
 GameObject:
   m_ObjectHideFlags: 0

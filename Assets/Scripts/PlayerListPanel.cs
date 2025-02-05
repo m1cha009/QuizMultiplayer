@@ -1,10 +1,9 @@
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerListPanel : NetworkBehaviour
+	public class PlayerListPanel : MonoBehaviour
 	{
 		[SerializeField] private Player _playerPrefab;
 
@@ -31,13 +30,10 @@ namespace Quiz
 				player.SetAnswer(playerData.Answer);
 				
 				_playerDic.Add(playerData.PlayerId, player);
-				
-				Debug.Log($"Instantiated playerID: {playerData.PlayerId}");
 			}
 		}
 
-		[Rpc(SendTo.Server)]
-		public void SetPlayerAnswerRpc(string playerId, string answer)
+		public void SetPlayerAnswer(string playerId, string answer)
 		{
 			if (_playerDic.Count == 0 || !_playerDic.ContainsKey(playerId))
 			{

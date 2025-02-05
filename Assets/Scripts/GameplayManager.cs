@@ -1,11 +1,14 @@
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class GameplayManager : MonoSingleton<GameplayManager>, ISessionProvider, IBaseSession
+	public class GameplayManager : NetworkSingleton<GameplayManager>, ISessionProvider, IBaseSession
 	{
+		[SerializeField] private PlayerListPanel _playerListPanel;
+		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
 		
@@ -38,6 +41,12 @@ namespace Quiz
 			}
 
 			return playersData;
+		}
+
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetAnswerRpc(string playerId, string answer)
+		{
+			_playerListPanel.SetPlayerAnswer(playerId, answer);
 		}
 	}
 }

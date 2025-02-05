@@ -15,13 +15,9 @@ namespace Quiz
 
 		private void OnEndEdit(string text)
 		{
-			Debug.Log($"New Text {text}");
-
 			var playerId = GameplayManager.Instance.CurrentPlayerId;
 			
-			Debug.Log($"Current PlayerId {playerId}");
-			
-			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
+			GameplayManager.Instance.SetAnswerRpc(playerId, text);
 		}
 	}
 }
