@@ -15,12 +15,12 @@ namespace Quiz
 			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
 		}
 		
-		public void OnGameplayInitialized()
+		public void OnGameplayStarted()
 		{
 			InitializePlayers();
 		}
 
-		public void OnGameplayDeInitialized()
+		public void OnGameplayStopped()
 		{
 			// throw new System.NotImplementedException();
 		}
@@ -62,7 +62,5 @@ namespace Quiz
 			_playerDic.TryGetValue(playerId, out var player);
 			if (player != null) player.SetAnswer(answer);
 		}
-
-		
 	}
 }

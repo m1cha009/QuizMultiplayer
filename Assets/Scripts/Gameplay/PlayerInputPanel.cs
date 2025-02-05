@@ -3,17 +3,22 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class PlayerInputPanel : MonoBehaviour
+	public class PlayerInputPanel : MonoBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
 	{
 		[SerializeField] private TMP_InputField _inputField;
 		[SerializeField] private PlayerListPanel _playerListPanel;
 		
-		private void Awake()
+		private void Start()
+		{
+			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
+		}
+		
+		public void OnGameplayStarted()
 		{
 			_inputField.onEndEdit.AddListener(OnEndEdit);
 		}
 
-		private void OnDestroy()
+		public void OnGameplayStopped()
 		{
 			_inputField.onEndEdit.RemoveListener(OnEndEdit);
 		}
@@ -22,7 +27,6 @@ namespace Quiz
 		{
 			var playerId = GameplayManager.Instance.CurrentPlayerId;
 			
-			// GameplayManager.Instance.SetAnswerRpc(playerId, text);
 			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
 		}
 	}

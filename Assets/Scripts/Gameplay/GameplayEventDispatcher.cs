@@ -18,7 +18,7 @@ namespace Quiz
 		{
 			foreach (var gameplayLifecycle in _gameplayLifecycleEvents)
 			{
-				gameplayLifecycle.OnGameplayInitialized();
+				gameplayLifecycle.OnGameplayStarted();
 			}
 		}
 		
@@ -26,7 +26,7 @@ namespace Quiz
 		{
 			foreach (var gameplayLifecycle in _gameplayLifecycleEvents)
 			{
-				gameplayLifecycle.OnGameplayDeInitialized();
+				gameplayLifecycle.OnGameplayStopped();
 			}
 		}
 	}
