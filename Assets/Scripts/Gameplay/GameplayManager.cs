@@ -8,6 +8,14 @@ namespace Quiz
 	public class GameplayManager : NetworkSingleton<GameplayManager>, ISessionProvider, IBaseSession
 	{
 		[SerializeField] private PlayerListPanel _playerListPanel;
+		[SerializeField] private QuestionsPanel _questionsPanel;
+
+		private readonly int _countdownDuration = 30;
+		private NetworkVariable<int> _serverTimeLeft = new ();
+		private readonly float _syncInterval = 1f;
+		private float _lastSyncTime;
+		private float _localTimeLeft;
+		private bool _timerInitialized;
 		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
@@ -17,6 +25,41 @@ namespace Quiz
 			SessionEventsDispatcher.Instance.RegisterBaseClassEvents(this);
 		}
 
+		public override void OnNetworkSpawn()
+		{
+			base.OnNetworkSpawn();
+
+			if (IsServer)
+			{
+				_serverTimeLeft.Value = _countdownDuration;
+			}
+			
+			_localTimeLeft = _countdownDuration;
+			_serverTimeLeft.OnValueChanged += OnTimerValueChanged;
+			
+			_timerInitialized = true;
+		}
+
+		public override void OnNetworkDespawn()
+		{
+			_serverTimeLeft.OnValueChanged -= OnTimerValueChanged;
+			_timerInitialized = false;
+			
+			base.OnNetworkDespawn();
+		}
+
+		private void OnTimerValueChanged(int previousValue, int newValue)
+		{
+			_questionsPanel.SetTimer(newValue);
+		}
+
+		private void Update()
+		{
+			if (!IsServer || !_timerInitialized) return;
+
+			CalculateQuestionTimeLeft();
+		}
+		
 		public List<PlayerData> GetPlayersData()
 		{
 			if (Session == null)
@@ -47,6 +90,20 @@ namespace Quiz
 		public void SetAnswerRpc(string playerId, string answer)
 		{
 			_playerListPanel.SetPlayerAnswer(playerId, answer);
+		}
+
+		private void CalculateQuestionTimeLeft()
+		{
+			if (_localTimeLeft > 0)
+			{
+				_localTimeLeft -= Time.deltaTime;
+			
+				if (Time.time - _lastSyncTime >= _syncInterval)
+				{
+					_lastSyncTime = Time.time;
+					_serverTimeLeft.Value = Mathf.FloorToInt(_localTimeLeft); // it is going to call OnTimerValueChanged
+				}
+			}
 		}
 	}
 }

@@ -7,15 +7,15 @@ namespace Quiz
 	{
 		[SerializeField] private LobbyScreen _lobbyScreen;
 		[SerializeField] private GameScreen _gameScreen;
+		
+		[SerializeField] private ScreensType _defaultScreen;
 
 		private GameScreenFactory _currentScreen;
 
 		private void Start()
 		{
-			_currentScreen = _lobbyScreen;
-			
-			_lobbyScreen.Enable();
-			_gameScreen.Disable();
+			_currentScreen = LocalChangeScreenRpc(_defaultScreen);
+			_currentScreen.Enable();
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -36,6 +36,23 @@ namespace Quiz
 					_currentScreen = _gameScreen;
 					break;
 			}
+		}
+
+		private GameScreenFactory LocalChangeScreenRpc(ScreensType screen)
+		{
+			switch (screen)
+			{
+				case ScreensType.None:
+					break;
+				
+				case ScreensType.Lobby:
+					return _lobbyScreen;
+				
+				case ScreensType.Game:
+					return _gameScreen;
+			}
+
+			return null;
 		}
 	}
 }
