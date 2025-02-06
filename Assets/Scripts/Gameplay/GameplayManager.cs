@@ -5,16 +5,6 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public interface IGameplayBaseEvents
-	{
-	}
-
-	public interface IGameplayLifecycleEvents
-	{
-		void OnGameplayStarted();
-		void OnGameplayStopped();
-	}
-
 	public class GameplayManager : NetworkSingleton<GameplayManager>, ISessionProvider, IBaseSession
 	{
 		[SerializeField] private QuestionPoolSo _questionsPool;
