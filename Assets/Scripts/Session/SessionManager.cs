@@ -56,14 +56,14 @@ namespace Quiz
 		private void RegisterSessionEvents()
 		{
 			ActiveSession.PlayerJoined += _sessionEventsDispatcher.OnPlayerJoined;
-			ActiveSession.PlayerLeft += _sessionEventsDispatcher.OnPlayerLeft;
+			ActiveSession.PlayerLeaving += _sessionEventsDispatcher.OnPlayerLeft;
 			ActiveSession.Deleted += _sessionEventsDispatcher.OnSessionDeleted;
 		}
 
 		private void UnRegisterSessionEvents()
 		{
 			ActiveSession.PlayerJoined -= _sessionEventsDispatcher.OnPlayerJoined;
-			ActiveSession.PlayerLeft -= _sessionEventsDispatcher.OnPlayerLeft;
+			ActiveSession.PlayerLeaving -= _sessionEventsDispatcher.OnPlayerLeft;
 			ActiveSession.Deleted -= _sessionEventsDispatcher.OnSessionDeleted;
 		}
 
