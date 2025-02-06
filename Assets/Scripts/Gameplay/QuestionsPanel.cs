@@ -1,28 +1,17 @@
 using TMPro;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class QuestionsPanel : NetworkBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
+	public class QuestionsPanel : MonoBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
 	{
 		[SerializeField] private TMP_Text _amountText;
 		[SerializeField] private TMP_Text _questionText;
-		[SerializeField] private TMP_Text _timerText;
+		[SerializeField] private Timer _timer;
 
 		private int _totalQuestions;
-		private int _questionIndex = 0;
-		private GameManager _gameManager;
 		
-		private readonly int _countdownDuration = 5;
-		private readonly NetworkVariable<int> _serverTimeLeft = new();
-		private readonly float _syncInterval = 1f;
-		private float _lastSyncTime;
-		private float _localTimeLeft;
-
-		private readonly NetworkVariable<int> _serverQuestionIndex = new();
-
-		private bool _isGameplayStarted;
+		private readonly int _countdownDuration = 8;
 
 		private void Start()
 		{
@@ -31,70 +20,38 @@ namespace Quiz
 
 		public void OnGameplayStarted()
 		{
-			if (_gameManager == null)
-			{
-				_gameManager = GameManager.Instance;
-			}
+			_totalQuestions = GamePlayManager.Instance.TotalQuestionsAmount;
 			
-			_totalQuestions = _gameManager.TotalQuestionsAmount;
+			SetQuestion(GamePlayManager.Instance.QuestionIndex);
 			
-			DisplayQuestion(_questionIndex);
-
-			_localTimeLeft = _countdownDuration;
-			_serverTimeLeft.OnValueChanged += OnTimerValueChanged;
-			_serverQuestionIndex.OnValueChanged += OnQuestionChanged;
-			_isGameplayStarted = true;
+			_timer.OnTimerEnd += TimerOnOnTimerEnd;
+			_timer.Initialize(_countdownDuration);
 		}
 
 		public void OnGameplayStopped()
 		{
-			_serverTimeLeft.OnValueChanged -= OnTimerValueChanged;
-			_serverQuestionIndex.OnValueChanged -= OnQuestionChanged;
-			_isGameplayStarted = false;
+			_timer.OnTimerEnd -= TimerOnOnTimerEnd;
+		}
+
+		public void SetupQuestionPanel(int questionIndex)
+		{
+			_timer.OnTimerEnd += TimerOnOnTimerEnd;
+			_timer.Initialize(_countdownDuration);
+			
+			SetQuestion(questionIndex);
 		}
 		
-		private void OnTimerValueChanged(int previousValue, int newValue)
+		private void TimerOnOnTimerEnd()
 		{
-			SetTimer(newValue);
-		}
-		
-		private void OnQuestionChanged(int previousValue, int newValue)
-		{
-			DisplayQuestion(newValue);
+			_timer.OnTimerEnd -= TimerOnOnTimerEnd;
+			GamePlayManager.Instance.ChangeGamePlayScreen(GameplayScreenState.EndRound);
 		}
 
-		private void Update()
-		{
-			if (!_isGameplayStarted || !IsServer) return;
-			
-			if (_localTimeLeft > 0)
-			{
-				_localTimeLeft -= Time.deltaTime;
-			
-				if (Time.time - _lastSyncTime >= _syncInterval)
-				{
-					_lastSyncTime = Time.time;
-					_serverTimeLeft.Value = Mathf.FloorToInt(_localTimeLeft); // it is going to call OnTimerValueChanged
-				}
-			}
-			else
-			{
-				_questionIndex = (_questionIndex + 1) % _totalQuestions;
-				_serverQuestionIndex.Value = _questionIndex; // it is going to call OnQuestionChanged
-				_localTimeLeft = _countdownDuration;
-			}
-		}
-
-		private void SetTimer(int time)
-		{
-			_timerText.SetText($"{time:F0} sec");
-		}
-
-		private void DisplayQuestion(int questionIndex)
+		private void SetQuestion(int questionIndex)
 		{
 			_amountText.SetText($"{questionIndex + 1} / {_totalQuestions}");
 
-			var question = _gameManager.GetQuestion(questionIndex);
+			var question = GamePlayManager.Instance.GetQuestion(questionIndex);
 			_questionText.SetText($"{question}");
 		}
 	}

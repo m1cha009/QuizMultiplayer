@@ -1,21 +1,65 @@
 using System.Collections.Generic;
-using Quiz.SO;
+using Unity.Netcode;
 using Unity.Services.Multiplayer;
 using UnityEngine;
 
 namespace Quiz
 {
-	public class GameManager : NetworkSingleton<GameManager>, ISessionProvider, IBaseSession
+	public class GameManager : NetworkSingleton<GameManager>, ISessionProvider, IBaseSession, ISessionLifecycleEvents
 	{
-		[SerializeField] private QuestionPoolSo _questionsPool;
-
+		[SerializeField] private ScreensType _defaultScreen;
+		
+		[SerializeField] private LobbyScreen _lobbyScreen;
+		[SerializeField] private GameScreen _gameScreen;
+		
+		private GameScreenFactory _currentScreen;
+		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
-		public int TotalQuestionsAmount => _questionsPool.QuestionPool.Count;
 		
 		private void OnEnable()
 		{
 			SessionEventsDispatcher.Instance.RegisterBaseClassEvents(this);
+		}
+		
+		private void Start()
+		{
+			_currentScreen = GetScreen(_defaultScreen);
+			_currentScreen.Enable();
+		}
+		
+		[Rpc(SendTo.ClientsAndHost)]
+		public void ChangeScreenRpc(ScreensType screen)
+		{
+			_currentScreen.Disable();
+
+			switch (screen)
+			{
+				case ScreensType.None:
+					break;
+				case ScreensType.Lobby:
+					_lobbyScreen.Enable();
+					_currentScreen = _lobbyScreen;
+					break;
+				case ScreensType.GamePlay:
+					_gameScreen.Enable();
+					_currentScreen = _gameScreen;
+					break;
+			}
+		}
+		
+		public void OnSessionJoined()
+		{
+		}
+
+		public void OnSessionLeft()
+		{
+			SystemLogger.Log("Host left server. Returning to lobby screen");
+			Debug.Log("Host left server. Returning to lobby screen");
+			
+			_currentScreen.Disable();
+			_lobbyScreen.Enable();
+			_currentScreen = _lobbyScreen;
 		}
 
 		public List<PlayerData> GetPlayersData()
@@ -43,7 +87,24 @@ namespace Quiz
 
 			return playersData;
 		}
-		
-		public string GetQuestion(int questionId) => _questionsPool.QuestionPool[questionId].Question;
+
+		private GameScreenFactory GetScreen(ScreensType screen)
+		{
+			switch (screen)
+			{
+				case ScreensType.None:
+					break;
+				
+				case ScreensType.Lobby:
+					return _lobbyScreen;
+				
+				case ScreensType.GamePlay:
+					return _gameScreen;
+			}
+
+			return null;
+		}
+
+
 	}
 }

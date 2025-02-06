@@ -7,6 +7,10 @@ namespace Quiz
 	{
 		[SerializeField] private EndRoundPlayer _endRoundPlayerPrefab;
 		[SerializeField] private Transform _rootParent;
+
+		[SerializeField] private Timer _timer;
+
+		private readonly int _endRoundTimerDuration = 5;
 		
 		private readonly Dictionary<string, EndRoundPlayer> _endRoundPlayers = new();
 
@@ -22,6 +26,15 @@ namespace Quiz
 				
 				_endRoundPlayers[playerData.PlayerId].Setup(playerData);
 			}
+			
+			_timer.OnTimerEnd += OnTimerEnd;
+			_timer.Initialize(_endRoundTimerDuration);
+		}
+
+		private void OnTimerEnd()
+		{
+			_timer.OnTimerEnd -= OnTimerEnd;
+			GamePlayManager.Instance.ChangeGamePlayScreen(GameplayScreenState.Gameplay);
 		}
 	}
 }

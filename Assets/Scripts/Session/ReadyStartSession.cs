@@ -28,7 +28,7 @@ namespace Quiz
 
 		private void OnStartButtonClicked() // host button
 		{
-			ScreensManager.Instance.ChangeScreenRpc(ScreensType.Game);
+			GameManager.Instance.ChangeScreenRpc(ScreensType.GamePlay);
 		}
 
 		private async void OnReadyButtonClicked() // clients button

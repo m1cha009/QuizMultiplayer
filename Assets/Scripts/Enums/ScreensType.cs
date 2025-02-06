@@ -4,6 +4,6 @@ namespace Quiz
 	{
 		None = 0,
 		Lobby = 1,
-		Game = 2,
+		GamePlay = 2,
 	}
 }
