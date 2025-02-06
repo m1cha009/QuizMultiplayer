@@ -27,7 +27,7 @@ namespace Quiz
 
 		private void InitializePlayers()
 		{
-			var playersDataList = GameplayManager.Instance.GetPlayersData();
+			var playersDataList = GameManager.Instance.GetPlayersData();
 
 			if (playersDataList == null)
 			{

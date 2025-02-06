@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class GameplayManager : NetworkSingleton<GameplayManager>, ISessionProvider, IBaseSession
+	public class GameManager : NetworkSingleton<GameManager>, ISessionProvider, IBaseSession
 	{
 		[SerializeField] private QuestionPoolSo _questionsPool;
 

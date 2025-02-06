@@ -12,7 +12,7 @@ namespace Quiz
 
 		private int _totalQuestions;
 		private int _questionIndex = 0;
-		private GameplayManager _gameplayManager;
+		private GameManager _gameManager;
 		
 		private readonly int _countdownDuration = 5;
 		private readonly NetworkVariable<int> _serverTimeLeft = new();
@@ -31,12 +31,12 @@ namespace Quiz
 
 		public void OnGameplayStarted()
 		{
-			if (_gameplayManager == null)
+			if (_gameManager == null)
 			{
-				_gameplayManager = GameplayManager.Instance;
+				_gameManager = GameManager.Instance;
 			}
 			
-			_totalQuestions = _gameplayManager.TotalQuestionsAmount;
+			_totalQuestions = _gameManager.TotalQuestionsAmount;
 			
 			DisplayQuestion(_questionIndex);
 
@@ -94,7 +94,7 @@ namespace Quiz
 		{
 			_amountText.SetText($"{questionIndex + 1} / {_totalQuestions}");
 
-			var question = _gameplayManager.GetQuestion(questionIndex);
+			var question = _gameManager.GetQuestion(questionIndex);
 			_questionText.SetText($"{question}");
 		}
 	}

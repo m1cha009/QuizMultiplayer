@@ -25,7 +25,7 @@ namespace Quiz
 
 		private void OnEndEdit(string text)
 		{
-			var playerId = GameplayManager.Instance.CurrentPlayerId;
+			var playerId = GameManager.Instance.CurrentPlayerId;
 			
 			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
 		}
