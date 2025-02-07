@@ -1,3 +1,4 @@
+using System.Linq;
 using UnityEngine;
 
 namespace Quiz
@@ -46,7 +47,7 @@ namespace Quiz
 					
 					var playerData = GameManager.Instance.GetPlayersData();
 					
-					_endRoundObject.InitializePlayers(playerData);
+					_endRoundObject.InitializePlayers(playerData.Values.ToList());
 					_endRoundObject.gameObject.SetActive(true);
 					_currentGamePlayScreen = _endRoundObject.gameObject;
 					break;

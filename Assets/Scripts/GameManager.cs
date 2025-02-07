@@ -14,6 +14,7 @@ namespace Quiz
 		[SerializeField] private FinishScreenManager _finishScreen;
 		
 		private BaseScreens _currentBaseScreen;
+		private readonly Dictionary<string, PlayerData> _playersDataDic = new();
 		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
@@ -73,16 +74,15 @@ namespace Quiz
 			}
 		}
 
-		public List<PlayerData> GetPlayersData()
+		public void InitializePlayersData()
 		{
 			if (Session == null)
 			{
 				SystemLogger.Log("Session is null");
 				Debug.Log("Session is null");
-				return null;
+				return ;
 			}
 
-			var playersData = new List<PlayerData>();
 			foreach (var player in Session.Players)
 			{
 				var playerId = player.Id;
@@ -92,12 +92,23 @@ namespace Quiz
 					playerName = playerProperty.Value;
 				}
 
-				var playerData = new PlayerData { PlayerId = playerId, PlayerName = playerName, Answer = string.Empty };
-				playersData.Add(playerData);
+				var playerData = new PlayerData
+				{
+					PlayerId = playerId, 
+					PlayerName = playerName, 
+					Answer = string.Empty
+				};
+				
+				_playersDataDic.Add(playerId, playerData);
 			}
-
-			return playersData;
 		}
+
+		public PlayerData GetPlayerData(string playerId)
+		{
+			return _playersDataDic.GetValueOrDefault(playerId);
+		}
+		
+		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
 
 		private BaseScreens GetScreen(ScreensType screen)
 		{
