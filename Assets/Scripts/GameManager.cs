@@ -11,8 +11,9 @@ namespace Quiz
 		
 		[SerializeField] private LobbyScreen _lobbyScreen;
 		[SerializeField] private GameScreen _gameScreen;
+		[SerializeField] private FinishScreenManager _finishScreen;
 		
-		private GameScreenFactory _currentScreen;
+		private BaseScreens _currentBaseScreen;
 		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
@@ -24,30 +25,10 @@ namespace Quiz
 		
 		private void Start()
 		{
-			_currentScreen = GetScreen(_defaultScreen);
-			_currentScreen.Enable();
+			_currentBaseScreen = GetScreen(_defaultScreen);
+			_currentBaseScreen.Enable();
 		}
-		
-		[Rpc(SendTo.ClientsAndHost)]
-		public void ChangeScreenRpc(ScreensType screen)
-		{
-			_currentScreen.Disable();
 
-			switch (screen)
-			{
-				case ScreensType.None:
-					break;
-				case ScreensType.Lobby:
-					_lobbyScreen.Enable();
-					_currentScreen = _lobbyScreen;
-					break;
-				case ScreensType.GamePlay:
-					_gameScreen.Enable();
-					_currentScreen = _gameScreen;
-					break;
-			}
-		}
-		
 		public void OnSessionJoined()
 		{
 		}
@@ -57,9 +38,39 @@ namespace Quiz
 			SystemLogger.Log("Host left server. Returning to lobby screen");
 			Debug.Log("Host left server. Returning to lobby screen");
 			
-			_currentScreen.Disable();
+			_currentBaseScreen.Disable();
 			_lobbyScreen.Enable();
-			_currentScreen = _lobbyScreen;
+			_currentBaseScreen = _lobbyScreen;
+		}
+		
+				
+		[Rpc(SendTo.ClientsAndHost)]
+		public void ChangeScreenRpc(ScreensType screen)
+		{
+			ChangeScreen(screen);
+		}
+		
+		public void ChangeScreen(ScreensType screen)
+		{
+			_currentBaseScreen.Disable();
+
+			switch (screen)
+			{
+				case ScreensType.None:
+					break;
+				case ScreensType.Lobby:
+					_lobbyScreen.Enable();
+					_currentBaseScreen = _lobbyScreen;
+					break;
+				case ScreensType.GamePlay:
+					_gameScreen.Enable();
+					_currentBaseScreen = _gameScreen;
+					break;
+				case ScreensType.FinishScreen:
+					_finishScreen.Enable();
+					_currentBaseScreen = _finishScreen;
+					break;
+			}
 		}
 
 		public List<PlayerData> GetPlayersData()
@@ -88,7 +99,7 @@ namespace Quiz
 			return playersData;
 		}
 
-		private GameScreenFactory GetScreen(ScreensType screen)
+		private BaseScreens GetScreen(ScreensType screen)
 		{
 			switch (screen)
 			{

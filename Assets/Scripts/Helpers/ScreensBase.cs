@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public abstract class GameScreenFactory : MonoBehaviour
+	public abstract class BaseScreens : MonoBehaviour
 	{
 		public virtual void Enable()
 		{

@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class GamePlayManager : NetworkSingleton<GamePlayManager>, IGameplayBaseEvents, IGameplayLifecycleEvents
+	public class GamePlayManager : MonoSingleton<GamePlayManager>
 	{
 		[SerializeField] private QuestionPoolSo _questionsPool;
 
@@ -15,46 +15,40 @@ namespace Quiz
 		public string GetQuestion(int questionId) => _questionsPool.QuestionPool[questionId].Question;
 
 
-		private GameplayScreenState _gameplayScreenState = GameplayScreenState.None;
 		private GameObject _currentGamePlayScreen;
 
 		private void Start()
 		{
-			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
-		}
-
-		public void OnGameplayStarted()
-		{
-			_gameplayScreenState = GameplayScreenState.Gameplay;
 			_currentGamePlayScreen = _gameplayObject;
 		}
 
-		public void OnGameplayStopped()
-		{
-			_gameplayScreenState = GameplayScreenState.None;
-		}
-
-		public void ChangeGamePlayScreen(GameplayScreenState gameplayScreenState)
+		public void ChangeInnerScreens(InnerScreensType innerScreensType)
 		{
 			_currentGamePlayScreen.SetActive(false);
 			
-			switch (gameplayScreenState)
+			switch (innerScreensType)
 			{
-				case GameplayScreenState.None:
+				case InnerScreensType.None:
 					break;
-				case GameplayScreenState.Gameplay:
+				case InnerScreensType.Gameplay:
 					_questionsPanel.SetupQuestionPanel(QuestionIndex);
 					
 					_gameplayObject.SetActive(true);
 					_currentGamePlayScreen = _gameplayObject;
 					break;
-				case GameplayScreenState.EndRound:
+				case InnerScreensType.EndRound:
+					QuestionIndex++;
+					if (QuestionIndex >= TotalQuestionsAmount)
+					{
+						GameManager.Instance.ChangeScreen(ScreensType.FinishScreen);
+						return;
+					}
+					
 					var playerData = GameManager.Instance.GetPlayersData();
 					
 					_endRoundObject.InitializePlayers(playerData);
 					_endRoundObject.gameObject.SetActive(true);
 					_currentGamePlayScreen = _endRoundObject.gameObject;
-					QuestionIndex++;
 					break;
 			}
 		}

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace Quiz
 {
-	public class FinishScreenManager : MonoBehaviour, ISessionProvider
+	public class FinishScreenManager : BaseScreens, ISessionProvider
 	{
 		[SerializeField] private Button _backToLobby;
 		[SerializeField] private Button _exitButton;
@@ -26,7 +26,7 @@ namespace Quiz
 
 		private void OnBackToLobbyClicked()
 		{
-			GameManager.Instance.ChangeScreenRpc(ScreensType.Lobby);
+			GameManager.Instance.ChangeScreen(ScreensType.Lobby);
 		}
 		
 		private async void OnExitClicked()

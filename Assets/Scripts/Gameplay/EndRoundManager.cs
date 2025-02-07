@@ -34,7 +34,7 @@ namespace Quiz
 		private void OnTimerEnd()
 		{
 			_timer.OnTimerEnd -= OnTimerEnd;
-			GamePlayManager.Instance.ChangeGamePlayScreen(GameplayScreenState.Gameplay);
+			GamePlayManager.Instance.ChangeInnerScreens(InnerScreensType.Gameplay);
 		}
 	}
 }

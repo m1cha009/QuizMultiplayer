@@ -1,6 +1,6 @@
 namespace Quiz
 {
-	public class LobbyScreen : GameScreenFactory
+	public class LobbyScreen : BaseScreens
 	{
 
 	}

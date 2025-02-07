@@ -1,6 +1,6 @@
 namespace Quiz
 {
-	public class GameScreen : GameScreenFactory
+	public class GameScreen : BaseScreens
 	{
 		public override void Enable()
 		{

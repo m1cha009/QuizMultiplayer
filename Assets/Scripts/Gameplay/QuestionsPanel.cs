@@ -44,7 +44,7 @@ namespace Quiz
 		private void TimerOnOnTimerEnd()
 		{
 			_timer.OnTimerEnd -= TimerOnOnTimerEnd;
-			GamePlayManager.Instance.ChangeGamePlayScreen(GameplayScreenState.EndRound);
+			GamePlayManager.Instance.ChangeInnerScreens(InnerScreensType.EndRound);
 		}
 
 		private void SetQuestion(int questionIndex)
