@@ -42,12 +42,13 @@ namespace Quiz
 					if (QuestionIndex >= TotalQuestionsAmount)
 					{
 						GameManager.Instance.ChangeScreen(ScreensType.FinishScreen);
+						QuestionIndex = 0;
 						return;
 					}
 					
 					var playerData = GameManager.Instance.GetPlayersData();
 					
-					_endRoundObject.InitializePlayers(playerData.Values.ToList());
+					_endRoundObject.SetupEndRound(playerData.Values.ToList());
 					_endRoundObject.gameObject.SetActive(true);
 					_currentGamePlayScreen = _endRoundObject.gameObject;
 					break;

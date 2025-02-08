@@ -4,9 +4,11 @@ using System.Collections.Generic;
 namespace Quiz
 {
 	[Serializable]
-	public class QuestionData
+	public struct QuestionData
 	{
 		public string Question;
 		public List<string> CorrectAnswers;
+		public List<string> IncorrectAnswers;
+		public int CorrectAnswerPoints;
 	}
 }

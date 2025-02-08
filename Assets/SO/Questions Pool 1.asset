@@ -17,3 +17,5 @@ MonoBehaviour:
     CorrectAnswers:
     - viva
     - m1cha
+    IncorrectAnswers: []
+    CorrectAnswerPoints: 999

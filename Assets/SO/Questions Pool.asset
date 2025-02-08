@@ -17,6 +17,8 @@ MonoBehaviour:
     CorrectAnswers:
     - viva
     - m1cha
+    IncorrectAnswers: []
+    CorrectAnswerPoints: 600
   - Question: kokia siandien diena?
     CorrectAnswers:
     - pirmadienis
@@ -24,6 +26,10 @@ MonoBehaviour:
     - treciadienis
     - ketvirtadienis
     - penktadienis
+    IncorrectAnswers: []
+    CorrectAnswerPoints: 700
   - Question: Kiek maksimaliai menesi dienu?
     CorrectAnswers:
     - 31
+    IncorrectAnswers: []
+    CorrectAnswerPoints: 800

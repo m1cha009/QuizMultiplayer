@@ -7,14 +7,13 @@ namespace Quiz
 	{
 		[SerializeField] private EndRoundPlayer _endRoundPlayerPrefab;
 		[SerializeField] private Transform _rootParent;
-
 		[SerializeField] private Timer _timer;
 
 		private readonly int _endRoundTimerDuration = 5;
 		
 		private readonly Dictionary<string, EndRoundPlayer> _endRoundPlayers = new();
 
-		public void InitializePlayers(List<PlayerData> playersData)
+		public void SetupEndRound(List<PlayerData> playersData)
 		{
 			foreach (var playerData in playersData)
 			{
