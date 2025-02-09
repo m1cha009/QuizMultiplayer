@@ -1,6 +1,6 @@
 namespace Quiz
 {
-	public struct PlayerData
+	public class PlayerData
 	{
 		public string PlayerId { get; set; }
 		public string PlayerName { get; set; }
