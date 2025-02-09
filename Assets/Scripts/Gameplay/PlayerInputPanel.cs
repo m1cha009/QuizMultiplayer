@@ -28,6 +28,8 @@ namespace Quiz
 			var playerId = GameManager.Instance.CurrentPlayerId;
 			
 			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
+			
+			GamePlayManager.Instance.SetPlayerAnswerRpc(playerId, text);
 		}
 	}
 }

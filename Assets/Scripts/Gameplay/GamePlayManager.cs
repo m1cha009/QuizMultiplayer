@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -21,10 +22,15 @@ namespace Quiz
 
 		private readonly float _gameplayTimerDuration = 7;
 		private readonly float _endRoundTimerDuration = 5;
+		private readonly Dictionary<string, string> _playersAnswersDic = new();
 		
 		public int TotalQuestionsAmount => _questionsPool.QuestionPool.Count;
 		public int QuestionIndex { get; private set; }
-		public string GetQuestion(int questionId) => _questionsPool.QuestionPool[questionId].Question;
+		public string GetQuestion(int questionIndex) => _questionsPool.QuestionPool[questionIndex].Question;
+		public List<string> GetCorrectAnswers(int questionIndex) => _questionsPool.QuestionPool[questionIndex].CorrectAnswers;
+
+		public int GetMaxAnswerPoints(int questionIndex) =>
+			_questionsPool.QuestionPool[questionIndex].CorrectAnswerPoints;
 
 		private void OnEnable()
 		{
@@ -75,6 +81,16 @@ namespace Quiz
 		{
 			_isGameplayStarted = false;
 		}
+		
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetPlayerAnswerRpc(string playerId, string answer)
+		{
+			if (!_playersAnswersDic.TryAdd(playerId, answer))
+			{
+				_playersAnswersDic.Remove(playerId);
+				_playersAnswersDic.Add(playerId, answer);
+			}
+		}
 
 		[Rpc(SendTo.ClientsAndHost)]
 		private void TimeChangedRpc(int newTime)
@@ -97,6 +113,8 @@ namespace Quiz
 					_gameplayScreen.gameObject.SetActive(true);
 					break;
 				case InnerScreensType.EndRound:
+					AnswerCalculation();
+					
 					QuestionIndex++;
 					
 					var playerData = GameManager.Instance.GetPlayersData();
@@ -143,5 +161,36 @@ namespace Quiz
 			return null;
 		}
 
+		private void AnswerCalculation()
+		{
+			var correctAnswers = GetCorrectAnswers(QuestionIndex);
+			var playersData = GameManager.Instance.GetPlayersData();
+			var maxAnswerPoints = GetMaxAnswerPoints(QuestionIndex);
+
+			var n = 1;
+			foreach (var player in _playersAnswersDic)
+			{
+				var playerId = player.Key;
+				var playerAnswer = player.Value;
+				
+				playersData.TryGetValue(playerId, out var playerData);
+				if (playerData == null) continue;
+				
+				var isFound = correctAnswers.Contains(playerAnswer);
+
+				if (!isFound)
+				{
+					playerData.AnswerPoints = 0;
+					
+					continue;
+				}
+				
+				playerData.AnswerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
+				playerData.TotalPoints += playerData.AnswerPoints;
+				
+				n++;
+			}
+		}
+		
 	}
 }

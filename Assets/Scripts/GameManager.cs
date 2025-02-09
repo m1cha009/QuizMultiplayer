@@ -43,8 +43,7 @@ namespace Quiz
 			_lobbyScreen.Enable();
 			_currentBaseScreen = _lobbyScreen;
 		}
-		
-				
+
 		[Rpc(SendTo.ClientsAndHost)]
 		public void ChangeScreenRpc(ScreensType screen)
 		{
@@ -109,7 +108,7 @@ namespace Quiz
 		}
 		
 		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
-
+		
 		private BaseScreens GetScreen(ScreensType screen)
 		{
 			switch (screen)
@@ -126,7 +125,5 @@ namespace Quiz
 
 			return null;
 		}
-
-
 	}
 }

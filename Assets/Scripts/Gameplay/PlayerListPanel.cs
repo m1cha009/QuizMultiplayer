@@ -18,8 +18,6 @@ namespace Quiz
 		
 		public void OnGameplayStarted()
 		{
-			GameManager.Instance.InitializePlayersData();
-			
 			_playersDataDic = GameManager.Instance.GetPlayersData();
 
 			if (_playersDataDic == null)

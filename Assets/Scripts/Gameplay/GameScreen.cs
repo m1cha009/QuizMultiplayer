@@ -6,6 +6,7 @@ namespace Quiz
 		{
 			base.Enable();
 			
+			GameManager.Instance.InitializePlayersData();
 			GameplayEventDispatcher.Instance.OnGameplayInitialized();
 		}
 
