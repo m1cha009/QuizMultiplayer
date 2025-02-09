@@ -3,17 +3,20 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class EndRoundManager : MonoBehaviour
+	public class EndRoundScreen : MonoBehaviour
 	{
 		[SerializeField] private EndRoundPlayer _endRoundPlayerPrefab;
 		[SerializeField] private Transform _rootParent;
 		[SerializeField] private Timer _timer;
 
-		private readonly int _endRoundTimerDuration = 5;
-		
 		private readonly Dictionary<string, EndRoundPlayer> _endRoundPlayers = new();
 
-		public void SetupEndRound(List<PlayerData> playersData)
+		private void OnDisable()
+		{
+			GamePlayManager.Instance.OnTimeChanged -= _timer.SetTimer;
+		}
+
+		public void SetupEndRoundScreen(List<PlayerData> playersData)
 		{
 			foreach (var playerData in playersData)
 			{
@@ -26,14 +29,7 @@ namespace Quiz
 				_endRoundPlayers[playerData.PlayerId].Setup(playerData);
 			}
 			
-			_timer.OnTimerEnd += OnTimerEnd;
-			_timer.Initialize(_endRoundTimerDuration);
-		}
-
-		private void OnTimerEnd()
-		{
-			_timer.OnTimerEnd -= OnTimerEnd;
-			GamePlayManager.Instance.ChangeInnerScreens(InnerScreensType.Gameplay);
+			GamePlayManager.Instance.OnTimeChanged += _timer.SetTimer;
 		}
 	}
 }

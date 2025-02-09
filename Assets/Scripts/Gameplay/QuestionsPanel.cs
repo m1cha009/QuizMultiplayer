@@ -3,48 +3,21 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class QuestionsPanel : MonoBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
+	public class QuestionsPanel : MonoBehaviour
 	{
 		[SerializeField] private TMP_Text _amountText;
 		[SerializeField] private TMP_Text _questionText;
-		[SerializeField] private Timer _timer;
 
 		private int _totalQuestions;
-		
-		private readonly int _countdownDuration = 8;
-
-		private void Start()
-		{
-			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
-		}
-
-		public void OnGameplayStarted()
-		{
-			_totalQuestions = GamePlayManager.Instance.TotalQuestionsAmount;
-			
-			SetQuestion(GamePlayManager.Instance.QuestionIndex);
-			
-			_timer.OnTimerEnd += TimerOnOnTimerEnd;
-			_timer.Initialize(_countdownDuration);
-		}
-
-		public void OnGameplayStopped()
-		{
-			_timer.OnTimerEnd -= TimerOnOnTimerEnd;
-		}
 
 		public void SetupQuestionPanel(int questionIndex)
 		{
-			_timer.OnTimerEnd += TimerOnOnTimerEnd;
-			_timer.Initialize(_countdownDuration);
-			
 			SetQuestion(questionIndex);
 		}
-		
-		private void TimerOnOnTimerEnd()
+
+		public void SetTotalQuestions(int totalQuestions)
 		{
-			_timer.OnTimerEnd -= TimerOnOnTimerEnd;
-			GamePlayManager.Instance.ChangeInnerScreens(InnerScreensType.EndRound);
+			_totalQuestions = totalQuestions;
 		}
 
 		private void SetQuestion(int questionIndex)
