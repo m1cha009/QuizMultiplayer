@@ -30,6 +30,8 @@ namespace Quiz
 			_playerListPanel.SetPlayerAnswerRpc(playerId, text);
 			
 			GamePlayManager.Instance.SetPlayerAnswerRpc(playerId, text);
+			
+			_inputField.SetTextWithoutNotify(string.Empty);
 		}
 	}
 }

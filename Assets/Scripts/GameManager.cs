@@ -79,7 +79,7 @@ namespace Quiz
 			{
 				SystemLogger.Log("Session is null");
 				Debug.Log("Session is null");
-				return ;
+				return;
 			}
 
 			foreach (var player in Session.Players)

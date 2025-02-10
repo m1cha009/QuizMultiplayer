@@ -35,7 +35,7 @@ namespace Quiz
 		{
 			_readyButton.interactable = false;
 
-			await Task.Delay(1000);
+			await Task.Delay(500);
 			
 			SessionEventsDispatcher.Instance.OnPlayerReadyRpc(Session.CurrentPlayer.Id, true);
 		}
