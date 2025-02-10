@@ -68,7 +68,7 @@ namespace Quiz
 			_currentInnerScreen = InnerScreensType.Gameplay;
 			_gameplayScreen.gameObject.SetActive(true);
 			
-			SetupInnerScreenRpc(_currentInnerScreen);
+			SetupInnerScreen(_currentInnerScreen);
 		}
 
 		public void OnGameplayStopped()
@@ -131,6 +131,11 @@ namespace Quiz
 
 		[Rpc(SendTo.ClientsAndHost)]
 		private void SetupInnerScreenRpc(InnerScreensType innerScreensType)
+		{
+			SetupInnerScreen(innerScreensType);
+		}
+		
+		private void SetupInnerScreen(InnerScreensType innerScreensType)
 		{
 			switch (innerScreensType)
 			{
