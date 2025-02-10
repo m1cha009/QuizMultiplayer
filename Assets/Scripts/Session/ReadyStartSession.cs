@@ -19,6 +19,8 @@ namespace Quiz
 		private void Awake()
 		{
 			DefaultState();
+
+			_startButton.interactable = true;
 		}
 
 		private void OnDestroy()
@@ -26,8 +28,10 @@ namespace Quiz
 			DefaultState();
 		}
 
-		private void OnStartButtonClicked() // host button
+		private async void OnStartButtonClicked() // host button
 		{
+			await GamePlayManager.Instance.SetQuestions();
+			
 			GameManager.Instance.ChangeScreenRpc(ScreensType.GamePlay);
 		}
 

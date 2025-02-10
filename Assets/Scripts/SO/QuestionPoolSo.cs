@@ -6,8 +6,8 @@ namespace Quiz
 	[CreateAssetMenu(fileName = "Questions Pool", menuName = "SO/Questions Pool", order = 0)]
 	public class QuestionPoolSo : ScriptableObject
 	{
-		[SerializeField] private List<QuestionData> _questionPool = new();
+		[SerializeField] private QuestionData _questionsList = new();
 		
-		public List<QuestionData> QuestionPool => _questionPool;
+		public List<Question> QuestionsList => _questionsList.questions;
 	}
 }

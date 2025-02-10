@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,6 +10,7 @@ namespace Quiz
 	public class GamePlayManager : NetworkSingleton<GamePlayManager>, IGameplayBaseEvents, IGameplayLifecycleEvents
 	{
 		[SerializeField] private QuestionPoolSo _questionsPool;
+		[SerializeField] private bool _useWebQuestions;
 		[SerializeField] private GameplayScreen _gameplayScreen;
 		[SerializeField] private EndRoundScreen _endRoundObject;
 
@@ -19,18 +21,20 @@ namespace Quiz
 		private float _lastSyncTime;
 		private float _localTimeLeft;
 		private bool _isGameplayStarted;
+		private readonly QuestionsService _questionsService = new();
+		private List<Question> _currentQuestionsData = new();
 
-		private readonly float _gameplayTimerDuration = 7;
+		private readonly float _gameplayTimerDuration = 15;
 		private readonly float _endRoundTimerDuration = 5;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
 		
-		public int TotalQuestionsAmount => _questionsPool.QuestionPool.Count;
+		public int TotalQuestionsAmount => _currentQuestionsData.Count;
 		public int QuestionIndex { get; private set; }
-		public string GetQuestion(int questionIndex) => _questionsPool.QuestionPool[questionIndex].Question;
-		public List<string> GetCorrectAnswers(int questionIndex) => _questionsPool.QuestionPool[questionIndex].CorrectAnswers;
+		public string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
+		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers;
 
 		public int GetMaxAnswerPoints(int questionIndex) =>
-			_questionsPool.QuestionPool[questionIndex].CorrectAnswerPoints;
+			_currentQuestionsData[questionIndex].points;
 
 		private void OnEnable()
 		{
@@ -83,6 +87,22 @@ namespace Quiz
 			{
 				_playersAnswersDic.Remove(playerId);
 				_playersAnswersDic.Add(playerId, answer);
+			}
+		}
+
+		public async UniTask SetQuestions()
+		{
+			if (!IsHost) return;
+			
+			if (_useWebQuestions)
+			{
+				var questionData = await _questionsService.GetQuestionData();
+				
+				_currentQuestionsData = questionData.questions;
+			}
+			else
+			{
+				_currentQuestionsData = _questionsPool.QuestionsList;
 			}
 		}
 

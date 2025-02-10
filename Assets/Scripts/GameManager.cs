@@ -120,6 +120,7 @@ namespace Quiz
 			foreach (var playerData in _playersDataDic.Values)
 			{
 				playerData.Answer = string.Empty;
+				playerData.AnswerPoints = 0;
 			}
 		}
 		

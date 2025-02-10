@@ -22,6 +22,9 @@ namespace Quiz
 
 		private void SetQuestion(int questionIndex)
 		{
+			var answers = GamePlayManager.Instance.GetCorrectAnswers(questionIndex);
+			Debug.Log($"Correct answers: {string.Join(",", answers)}");
+			
 			_amountText.SetText($"{questionIndex + 1} / {_totalQuestions}");
 
 			var question = GamePlayManager.Instance.GetQuestion(questionIndex);

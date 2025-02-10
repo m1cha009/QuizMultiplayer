@@ -6,9 +6,17 @@ namespace Quiz
 	[Serializable]
 	public struct QuestionData
 	{
-		public string Question;
-		public List<string> CorrectAnswers;
-		public List<string> IncorrectAnswers;
-		public int CorrectAnswerPoints;
+		public List<Question> questions;
+	}
+
+	[Serializable]
+	public struct Question
+	{
+		public List<string> answers;
+		public string category;
+		public string language;
+		public int points;
+		public string question;
+		public List<string> wrong_answers;
 	}
 }

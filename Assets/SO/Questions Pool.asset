@@ -12,24 +12,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f10d1ffd3ea14ea6ab83f99a27d8a43d, type: 3}
   m_Name: Questions Pool
   m_EditorClassIdentifier: 
-  _questionPool:
-  - Question: Kas as?
-    CorrectAnswers:
-    - viva
-    - m1cha
-    IncorrectAnswers: []
-    CorrectAnswerPoints: 100
-  - Question: kokia siandien diena?
-    CorrectAnswers:
-    - pirmadienis
-    - antradienis
-    - treciadienis
-    - k
-    - penktadienis
-    IncorrectAnswers: []
-    CorrectAnswerPoints: 100
-  - Question: Kiek maksimaliai menesi dienu?
-    CorrectAnswers:
-    - 31
-    IncorrectAnswers: []
-    CorrectAnswerPoints: 100
+  _questionsList:
+    questions:
+    - answers:
+      - m1cha
+      - viva
+      category: names
+      language: en
+      points: 500
+      question: What's my name?
+      wrong_answers:
+      - Petras
+    - answers:
+      - 2025
+      category: names
+      language: lt
+      points: 500
+      question: kuries dabar metai?
+      wrong_answers:
+      - 2024
+    - answers:
+      - daug
+      - ne mazai
+      category: names
+      language: lt
+      points: 500
+      question: kiek ryziu reeikia kad pavalgyt?
+      wrong_answers:
+      - 1
