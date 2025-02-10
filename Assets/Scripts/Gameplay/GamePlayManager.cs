@@ -40,14 +40,6 @@ namespace Quiz
 		private void Update()
 		{
 			if (!_isGameplayStarted || !IsHost) return;
-
-			if (QuestionIndex >= TotalQuestionsAmount)
-			{
-				GameManager.Instance.ChangeScreenRpc(ScreensType.FinishScreen);
-				QuestionIndex = 0;
-				
-				return;
-			}
 			
 			if (_localTimeLeft > 0)
 			{
@@ -109,8 +101,16 @@ namespace Quiz
 				case InnerScreensType.None:
 					break;
 				case InnerScreensType.Gameplay:
-					_gameplayScreen.SetupGameplayScreen(QuestionIndex);
-					_gameplayScreen.gameObject.SetActive(true);
+					if (QuestionIndex >= TotalQuestionsAmount)
+					{
+						GameManager.Instance.ChangeScreenRpc(ScreensType.FinishScreen);
+						QuestionIndex = 0;
+					}
+					else
+					{
+						_gameplayScreen.SetupGameplayScreen(QuestionIndex);
+						_gameplayScreen.gameObject.SetActive(true);
+					}
 					break;
 				case InnerScreensType.EndRound:
 					AnswerCalculation();
