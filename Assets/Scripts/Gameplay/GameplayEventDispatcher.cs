@@ -14,7 +14,7 @@ namespace Quiz
 			}
 		}
 
-		public void OnGameplayInitialized()
+		public void OnGameplayStarted()
 		{
 			foreach (var gameplayLifecycle in _gameplayLifecycleEvents)
 			{
@@ -22,7 +22,7 @@ namespace Quiz
 			}
 		}
 		
-		public void OnGameplayDeInitialized()
+		public void OnGameplayStopped()
 		{
 			foreach (var gameplayLifecycle in _gameplayLifecycleEvents)
 			{

@@ -5,8 +5,9 @@ using UnityEngine.UI;
 
 namespace Quiz
 {
-	public class FinishScreenManager : BaseScreens, ISessionProvider
+	public class FinishScreenManager : BaseScreens, ISessionProvider, IBaseSession, ISessionLifecycleEvents
 	{
+		[SerializeField] private Button _restartGame;
 		[SerializeField] private Button _backToLobby;
 		[SerializeField] private Button _exitButton;
 		
@@ -14,14 +15,29 @@ namespace Quiz
 
 		private void Awake()
 		{
+			_restartGame.onClick.AddListener(OnRestartClicked);
 			_backToLobby.onClick.AddListener(OnBackToLobbyClicked);
 			_exitButton.onClick.AddListener(OnExitClicked);
 		}
 
+		private void OnEnable()
+		{
+			SessionEventsDispatcher.Instance.RegisterBaseClassEvents(this);
+		}
+
 		private void OnDestroy()
 		{
+			_restartGame.onClick.RemoveListener(OnRestartClicked);
 			_backToLobby.onClick.RemoveListener(OnBackToLobbyClicked);
 			_exitButton.onClick.RemoveListener(OnExitClicked);
+		}
+
+		private void OnRestartClicked()
+		{
+			if (Session.IsHost)
+			{
+				GameManager.Instance.ChangeScreenRpc(ScreensType.GamePlay);
+			}
 		}
 
 		private void OnBackToLobbyClicked()
@@ -49,6 +65,17 @@ namespace Quiz
 			Application.Quit();
 		}
 
-		
+
+		public void OnSessionJoined()
+		{
+			if (!Session.IsHost)
+			{
+				_restartGame.interactable = false;
+			}
+		}
+
+		public void OnSessionLeft()
+		{
+		}
 	}
 }

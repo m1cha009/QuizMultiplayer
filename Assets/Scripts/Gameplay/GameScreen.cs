@@ -7,14 +7,14 @@ namespace Quiz
 			base.Enable();
 			
 			GameManager.Instance.InitializePlayersData();
-			GameplayEventDispatcher.Instance.OnGameplayInitialized();
+			GameplayEventDispatcher.Instance.OnGameplayStarted();
 		}
 
 		public override void Disable()
 		{
 			base.Disable();
 			
-			GameplayEventDispatcher.Instance.OnGameplayDeInitialized();
+			GameplayEventDispatcher.Instance.OnGameplayStopped();
 		}
 	}
 }

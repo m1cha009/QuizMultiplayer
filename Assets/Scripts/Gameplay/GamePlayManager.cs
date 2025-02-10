@@ -13,8 +13,8 @@ namespace Quiz
 		[SerializeField] private EndRoundScreen _endRoundObject;
 
 		public event Action<int> OnTimeChanged;
-		
-		private InnerScreensType _currentInnerScreen = InnerScreensType.Gameplay;
+
+		private InnerScreensType _currentInnerScreen;
 		private readonly float _syncInterval = 1f;
 		private float _lastSyncTime;
 		private float _localTimeLeft;
@@ -65,6 +65,8 @@ namespace Quiz
 		public void OnGameplayStarted()
 		{
 			_isGameplayStarted = true;
+			_currentInnerScreen = InnerScreensType.Gameplay;
+			_gameplayScreen.gameObject.SetActive(true);
 			
 			SetupInnerScreen(_currentInnerScreen);
 		}

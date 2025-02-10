@@ -85,6 +85,12 @@ namespace Quiz
 			foreach (var player in Session.Players)
 			{
 				var playerId = player.Id;
+
+				if (_playersDataDic.ContainsKey(playerId))
+				{
+					continue;
+				}
+				
 				var playerName = "UnKnown";
 				if (player.Properties.TryGetValue(SessionConstants.PlayerNameProperty, out var playerProperty))
 				{
