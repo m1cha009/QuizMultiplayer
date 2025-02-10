@@ -68,6 +68,14 @@ namespace Quiz
 			}
 		}
 
+		public void CleanAnswers()
+		{
+			foreach (var player in _playersDic.Values)
+			{
+				player.SetAnswer(string.Empty);
+			}
+		}
+
 		private void InitializePlayers(Dictionary<string, PlayerData> playersData)
 		{
 			foreach (var playerData in playersData)

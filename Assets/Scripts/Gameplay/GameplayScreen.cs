@@ -6,6 +6,7 @@ namespace Quiz
 	{
 		[SerializeField] private QuestionsPanel _questionsPanel;
 		[SerializeField] private Timer _timer;
+		[SerializeField] private PlayerListPanel _playerListPanel;
 
 		private void Start()
 		{
@@ -33,6 +34,11 @@ namespace Quiz
 			_questionsPanel.SetupQuestionPanel(questionIndex);
 			
 			GamePlayManager.Instance.OnTimeChanged += _timer.SetTimer;
+		}
+
+		public void ClearAnswers()
+		{
+			_playerListPanel.CleanAnswers();
 		}
 	}
 }

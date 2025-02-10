@@ -57,7 +57,7 @@ namespace Quiz
 					? InnerScreensType.EndRound
 					: InnerScreensType.Gameplay;
 				
-				SetupInnerScreen(newInnerScreen);
+				SetupInnerScreenRpc(newInnerScreen);
 				ChangeInnerScreensRpc(newInnerScreen);
 			}
 		}
@@ -68,7 +68,7 @@ namespace Quiz
 			_currentInnerScreen = InnerScreensType.Gameplay;
 			_gameplayScreen.gameObject.SetActive(true);
 			
-			SetupInnerScreen(_currentInnerScreen);
+			SetupInnerScreenRpc(_currentInnerScreen);
 		}
 
 		public void OnGameplayStopped()
@@ -129,7 +129,8 @@ namespace Quiz
 			_currentInnerScreen = newInnerScreen;
 		}
 
-		private void SetupInnerScreen(InnerScreensType innerScreensType)
+		[Rpc(SendTo.ClientsAndHost)]
+		private void SetupInnerScreenRpc(InnerScreensType innerScreensType)
 		{
 			switch (innerScreensType)
 			{
@@ -137,6 +138,9 @@ namespace Quiz
 					break;
 				case InnerScreensType.Gameplay:
 					_localTimeLeft = _gameplayTimerDuration;
+					_gameplayScreen.ClearAnswers();
+					_playersAnswersDic.Clear();
+					GameManager.Instance.ClearPLayerDataAnswers();
 					
 					break;
 				case InnerScreensType.EndRound:

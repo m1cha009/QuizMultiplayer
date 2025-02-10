@@ -114,6 +114,14 @@ namespace Quiz
 		}
 		
 		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
+
+		public void ClearPLayerDataAnswers()
+		{
+			foreach (var playerData in _playersDataDic.Values)
+			{
+				playerData.Answer = string.Empty;
+			}
+		}
 		
 		private BaseScreens GetScreen(ScreensType screen)
 		{

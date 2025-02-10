@@ -8305,6 +8305,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _questionsPanel: {fileID: 302186704}
   _timer: {fileID: 672729494}
+  _playerListPanel: {fileID: 201188449}
 --- !u!1 &1677389190
 GameObject:
   m_ObjectHideFlags: 0
