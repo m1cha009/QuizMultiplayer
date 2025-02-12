@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -24,14 +25,15 @@ namespace Quiz
 		private readonly QuestionsService _questionsService = new();
 		private List<Question> _currentQuestionsData = new();
 
-		private readonly float _gameplayTimerDuration = 15;
+		private readonly float _gameplayTimerDuration = 10;
 		private readonly float _endRoundTimerDuration = 5;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
-		
-		public int TotalQuestionsAmount => _currentQuestionsData.Count;
+
+		public NetworkVariable<FixedString128Bytes> CurrentQuestion { get; private set; } = new();
+		public NetworkVariable<int> TotalQuestions { get; private set; } = new();
 		public int QuestionIndex { get; private set; }
 		public string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
-		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers;
+		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers.ToList();
 
 		public int GetMaxAnswerPoints(int questionIndex) =>
 			_currentQuestionsData[questionIndex].points;
@@ -71,7 +73,6 @@ namespace Quiz
 			_isGameplayStarted = true;
 			_currentInnerScreen = InnerScreensType.Gameplay;
 			_gameplayScreen.gameObject.SetActive(true);
-			
 			SetupInnerScreen(_currentInnerScreen);
 		}
 
@@ -98,12 +99,15 @@ namespace Quiz
 			{
 				var questionData = await _questionsService.GetQuestionData();
 				
-				_currentQuestionsData = questionData.questions;
+				_currentQuestionsData = questionData.questions.ToList();
 			}
 			else
 			{
 				_currentQuestionsData = _questionsPool.QuestionsList;
 			}
+
+			CurrentQuestion.Value = GetQuestion(QuestionIndex);
+			TotalQuestions.Value = _currentQuestionsData.Count;
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -123,7 +127,7 @@ namespace Quiz
 				case InnerScreensType.None:
 					break;
 				case InnerScreensType.Gameplay:
-					if (QuestionIndex >= TotalQuestionsAmount)
+					if (QuestionIndex >= TotalQuestions.Value)
 					{
 						GameManager.Instance.ChangeScreenRpc(ScreensType.FinishScreen);
 						QuestionIndex = 0;
@@ -135,18 +139,29 @@ namespace Quiz
 					}
 					break;
 				case InnerScreensType.EndRound:
-					AnswerCalculation();
+
+					if (IsHost)
+					{
+						AnswerCalculation();
+					
+						CurrentQuestion.Value = GetQuestion(QuestionIndex);
+						var playerData = GameManager.Instance.GetPlayersData();
+
+						SetupEndRoundRpc(playerData.Values.ToArray());
+					}
 					
 					QuestionIndex++;
-					
-					var playerData = GameManager.Instance.GetPlayersData();
-					
-					_endRoundObject.SetupEndRoundScreen(playerData.Values.ToList());
-					_endRoundObject.gameObject.SetActive(true);
+
 					break;
 			}
 
 			_currentInnerScreen = newInnerScreen;
+		}
+
+		[Rpc(SendTo.ClientsAndHost)]
+		private void SetupEndRoundRpc(PlayerData[] playerDataArray)
+		{
+			_endRoundObject.SetupEndRoundScreen(playerDataArray);
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -166,7 +181,7 @@ namespace Quiz
 					_gameplayScreen.ClearAnswers();
 					_playersAnswersDic.Clear();
 					GameManager.Instance.ClearPLayerDataAnswers();
-					
+
 					break;
 				case InnerScreensType.EndRound:
 					_localTimeLeft = _endRoundTimerDuration;

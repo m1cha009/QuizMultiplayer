@@ -7729,6 +7729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5887cbbce99f4e9896fdced10723d57a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
   _endRoundPlayerPrefab: {fileID: 1822586014074954022, guid: da09e54053ec49c41b65a6bb66b37a63, type: 3}
   _rootParent: {fileID: 773517381}
   _timer: {fileID: 1276385829}

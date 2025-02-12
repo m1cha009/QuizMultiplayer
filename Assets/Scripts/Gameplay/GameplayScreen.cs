@@ -20,7 +20,7 @@ namespace Quiz
 
 		public void OnGameplayStarted()
 		{
-			_questionsPanel.SetTotalQuestions(GamePlayManager.Instance.TotalQuestionsAmount);
+			_questionsPanel.SetTotalQuestions(GamePlayManager.Instance.TotalQuestions.Value);
 			SetupGameplayScreen(0);
 		}
 

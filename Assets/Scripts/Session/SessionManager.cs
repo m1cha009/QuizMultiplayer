@@ -94,6 +94,8 @@ namespace Quiz
 				
 				ActiveSession = await MultiplayerService.Instance.CreateSessionAsync(options);
 				
+				await GamePlayManager.Instance.SetQuestions();
+				
 				SystemLogger.Log(
 					$"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");
 				Debug.Log($"Player {PlayerName} created session: {ActiveSession.Id}. Join Code: {ActiveSession.Code}");

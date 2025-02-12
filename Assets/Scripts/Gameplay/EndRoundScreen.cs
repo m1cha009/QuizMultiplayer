@@ -16,7 +16,7 @@ namespace Quiz
 			GamePlayManager.Instance.OnTimeChanged -= _timer.SetTimer;
 		}
 
-		public void SetupEndRoundScreen(List<PlayerData> playersData)
+		public void SetupEndRoundScreen(PlayerData[] playersData)
 		{
 			foreach (var playerData in playersData)
 			{
@@ -30,6 +30,8 @@ namespace Quiz
 			}
 			
 			GamePlayManager.Instance.OnTimeChanged += _timer.SetTimer;
+			
+			gameObject.SetActive(true);
 		}
 	}
 }

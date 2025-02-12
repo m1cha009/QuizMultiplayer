@@ -30,7 +30,7 @@ namespace Quiz
 
 		private async void OnStartButtonClicked() // host button
 		{
-			await GamePlayManager.Instance.SetQuestions();
+			// await GamePlayManager.Instance.SetQuestions();
 			
 			GameManager.Instance.ChangeScreenRpc(ScreensType.GamePlay);
 		}
