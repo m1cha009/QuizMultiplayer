@@ -126,6 +126,7 @@ namespace Quiz
 			{
 				case InnerScreensType.None:
 					break;
+				
 				case InnerScreensType.Gameplay:
 					if (QuestionIndex >= TotalQuestions.Value)
 					{
@@ -138,13 +139,12 @@ namespace Quiz
 						_gameplayScreen.gameObject.SetActive(true);
 					}
 					break;
+				
 				case InnerScreensType.EndRound:
-
 					if (IsHost)
 					{
 						AnswerCalculation();
-					
-						CurrentQuestion.Value = GetQuestion(QuestionIndex);
+						
 						var playerData = GameManager.Instance.GetPlayersData();
 
 						SetupEndRoundRpc(playerData.Values.ToArray());
@@ -152,6 +152,11 @@ namespace Quiz
 					
 					QuestionIndex++;
 
+					if (IsHost)
+					{
+						CurrentQuestion.Value = GetQuestion(QuestionIndex);
+					}
+					
 					break;
 			}
 
