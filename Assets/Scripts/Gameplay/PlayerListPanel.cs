@@ -92,6 +92,7 @@ namespace Quiz
 			var player = Instantiate(_playerPrefab, transform);
 			player.SetName(playerData.PlayerName);
 			player.SetAnswer(playerData.Answer);
+			player.SetPoints(playerData.TotalPoints);
 			
 			_playersDic.Add(playerData.PlayerId, player);
 		}

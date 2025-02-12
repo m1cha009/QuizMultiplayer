@@ -101,7 +101,8 @@ namespace Quiz
 				{
 					PlayerId = playerId, 
 					PlayerName = playerName, 
-					Answer = string.Empty
+					Answer = string.Empty,
+					TotalPoints = 1000
 				};
 				
 				_playersDataDic.Add(playerId, playerData);

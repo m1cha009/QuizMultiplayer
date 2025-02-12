@@ -25,7 +25,7 @@ namespace Quiz
 		private readonly QuestionsService _questionsService = new();
 		private List<Question> _currentQuestionsData = new();
 
-		private readonly float _gameplayTimerDuration = 10;
+		private readonly float _gameplayTimerDuration = 15;
 		private readonly float _endRoundTimerDuration = 5;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
 
