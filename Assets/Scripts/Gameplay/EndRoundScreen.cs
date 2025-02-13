@@ -16,9 +16,9 @@ namespace Quiz
 			GamePlayManager.Instance.OnTimeChanged -= _timer.SetTimer;
 		}
 
-		public void SetupEndRoundScreen(PlayerData[] playersData)
+		public void SetupEndRoundScreen(PlayerData[] playerDataArray)
 		{
-			foreach (var playerData in playersData)
+			foreach (var playerData in playerDataArray)
 			{
 				if (!_endRoundPlayers.ContainsKey(playerData.PlayerId))
 				{

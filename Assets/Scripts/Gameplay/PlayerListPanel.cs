@@ -76,6 +76,20 @@ namespace Quiz
 			}
 		}
 
+		public void UpdateTotalPoints()
+		{
+			foreach (var keyValuePair in _playersDic)
+			{
+				var playerId = keyValuePair.Key;
+				var player = keyValuePair.Value;
+
+				if (_playersDataDic.TryGetValue(playerId, out var playerData))
+				{
+					player.SetPoints(playerData.TotalPoints);
+				}
+			}
+		}
+
 		private void InitializePlayers(Dictionary<string, PlayerData> playersData)
 		{
 			foreach (var playerData in playersData)

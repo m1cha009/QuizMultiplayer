@@ -108,11 +108,6 @@ namespace Quiz
 				_playersDataDic.Add(playerId, playerData);
 			}
 		}
-
-		public PlayerData GetPlayerData(string playerId)
-		{
-			return _playersDataDic.GetValueOrDefault(playerId);
-		}
 		
 		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
 

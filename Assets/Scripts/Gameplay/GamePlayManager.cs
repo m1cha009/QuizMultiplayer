@@ -30,6 +30,7 @@ namespace Quiz
 
 		private readonly float _endRoundTimerDuration = 2;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
+		private Dictionary<string, PlayerData> _playerDataDic;
 
 		private string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
 		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers.ToList();
@@ -68,6 +69,8 @@ namespace Quiz
 
 		public void OnGameplayStarted()
 		{
+			_playerDataDic = GameManager.Instance.GetPlayersData();
+			
 			if (!IsHost) return;
 
 			_isGameplayStarted = true;
@@ -149,9 +152,7 @@ namespace Quiz
 					{
 						AnswerCalculation();
 						
-						var playerData = GameManager.Instance.GetPlayersData();
-
-						SetupEndRoundRpc(playerData.Values.ToArray());
+						SetupEndRoundRpc(_playerDataDic.Values.ToArray());
 					}
 					
 					_questionIndex++;
@@ -204,7 +205,6 @@ namespace Quiz
 		private void AnswerCalculation()
 		{
 			var correctAnswers = GetCorrectAnswers(_questionIndex);
-			var playersData = GameManager.Instance.GetPlayersData();
 			var maxAnswerPoints = GetMaxAnswerPoints(_questionIndex);
 
 			var n = 1;
@@ -213,22 +213,32 @@ namespace Quiz
 				var playerId = player.Key;
 				var playerAnswer = player.Value;
 				
-				playersData.TryGetValue(playerId, out var playerData);
+				_playerDataDic.TryGetValue(playerId, out var playerData);
 				if (playerData == null) continue;
-				
+
 				var isFound = correctAnswers.Contains(playerAnswer);
 
 				if (!isFound)
 				{
-					playerData.AnswerPoints = 0;
+					UpdatePointsRpc(playerId, 0 );
 					
 					continue;
 				}
-				
-				playerData.AnswerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
-				playerData.TotalPoints += playerData.AnswerPoints;
+
+				var answerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
+				UpdatePointsRpc(playerId, answerPoints );
 				
 				n++;
+			}
+		}
+
+		[Rpc(SendTo.ClientsAndHost)]
+		private void UpdatePointsRpc(string playerId, int answerPoints)
+		{
+			if (_playerDataDic.TryGetValue(playerId, out var playerData))
+			{
+				playerData.AnswerPoints = answerPoints;
+				playerData.TotalPoints += answerPoints;
 			}
 		}
 		

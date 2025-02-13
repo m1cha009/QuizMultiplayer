@@ -15,6 +15,7 @@ namespace Quiz
 		
 		public void SetupGameplayScreen(int questionIndex, int totalQuestions, string question)
 		{
+			_playerListPanel.UpdateTotalPoints();
 			_questionsPanel.SetTotalQuestions(totalQuestions);
 			_questionsPanel.SetupQuestionPanel(questionIndex, question);
 			
