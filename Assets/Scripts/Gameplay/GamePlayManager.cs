@@ -220,24 +220,25 @@ namespace Quiz
 
 				if (!isFound)
 				{
-					UpdatePointsRpc(playerId, 0 );
+					playerData.AnswerPoints = 0;
 					
 					continue;
 				}
 
 				var answerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
-				UpdatePointsRpc(playerId, answerPoints );
+				playerData.AnswerPoints = answerPoints;
+				
+				UpdateTotalPointsRpc(playerId, answerPoints);
 				
 				n++;
 			}
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		private void UpdatePointsRpc(string playerId, int answerPoints)
+		private void UpdateTotalPointsRpc(string playerId, int answerPoints)
 		{
 			if (_playerDataDic.TryGetValue(playerId, out var playerData))
 			{
-				playerData.AnswerPoints = answerPoints;
 				playerData.TotalPoints += answerPoints;
 			}
 		}
