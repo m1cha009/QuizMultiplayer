@@ -14,28 +14,27 @@ namespace Quiz
 		[SerializeField] private bool _useWebQuestions;
 		[SerializeField] private GameplayScreen _gameplayScreen;
 		[SerializeField] private EndRoundScreen _endRoundObject;
+		[SerializeField] private float _gameplayTimerDuration;
 
 		public event Action<int> OnTimeChanged;
-
-		private InnerScreensType _currentInnerScreen;
+		
+		private InnerScreensType _currentInnerScreen = InnerScreensType.None;
 		private readonly float _syncInterval = 1f;
 		private float _lastSyncTime;
 		private float _localTimeLeft;
 		private bool _isGameplayStarted;
 		private readonly QuestionsService _questionsService = new();
 		private List<Question> _currentQuestionsData = new();
+		private int _totalQuestions;
+		private int _questionIndex;
 
-		private readonly float _gameplayTimerDuration = 15;
-		private readonly float _endRoundTimerDuration = 5;
+		private readonly float _endRoundTimerDuration = 2;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
 
-		public NetworkVariable<FixedString128Bytes> CurrentQuestion { get; private set; } = new();
-		public NetworkVariable<int> TotalQuestions { get; private set; } = new();
-		public int QuestionIndex { get; private set; }
-		public string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
+		private string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
 		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers.ToList();
 
-		public int GetMaxAnswerPoints(int questionIndex) =>
+		private int GetMaxAnswerPoints(int questionIndex) =>
 			_currentQuestionsData[questionIndex].points;
 
 		private void OnEnable()
@@ -63,21 +62,23 @@ namespace Quiz
 					? InnerScreensType.EndRound
 					: InnerScreensType.Gameplay;
 				
-				SetupInnerScreenRpc(newInnerScreen);
-				ChangeInnerScreensRpc(newInnerScreen);
+				ChangeInnerScreen(newInnerScreen);
 			}
 		}
-		
+
 		public void OnGameplayStarted()
 		{
+			if (!IsHost) return;
+
 			_isGameplayStarted = true;
-			_currentInnerScreen = InnerScreensType.Gameplay;
-			_gameplayScreen.gameObject.SetActive(true);
-			SetupInnerScreen(_currentInnerScreen);
+			
+			ChangeInnerScreen(InnerScreensType.Gameplay);
 		}
 
 		public void OnGameplayStopped()
 		{
+			if (!IsHost) return;
+			
 			_isGameplayStarted = false;
 		}
 		
@@ -106,8 +107,7 @@ namespace Quiz
 				_currentQuestionsData = _questionsPool.QuestionsList;
 			}
 
-			CurrentQuestion.Value = GetQuestion(QuestionIndex);
-			TotalQuestions.Value = _currentQuestionsData.Count;
+			_totalQuestions = _currentQuestionsData.Count;
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -116,11 +116,9 @@ namespace Quiz
 			OnTimeChanged?.Invoke(newTime);
 		}
 
-		[Rpc(SendTo.ClientsAndHost)]
-		private void ChangeInnerScreensRpc(InnerScreensType newInnerScreen)
+		private void ChangeInnerScreen(InnerScreensType newInnerScreen)
 		{
-			var currentScreenGameObj = GetCurrentScreenGameObject(_currentInnerScreen);
-			currentScreenGameObj.SetActive(false);
+			DisableCurrentScreenRpc(_currentInnerScreen);
 			
 			switch (newInnerScreen)
 			{
@@ -128,19 +126,25 @@ namespace Quiz
 					break;
 				
 				case InnerScreensType.Gameplay:
-					if (QuestionIndex >= TotalQuestions.Value)
+					_localTimeLeft = _gameplayTimerDuration;
+					GameManager.Instance.ClearPLayerDataAnswers();
+					
+					if (_questionIndex >= _totalQuestions)
 					{
 						GameManager.Instance.ChangeScreenRpc(ScreensType.FinishScreen);
-						QuestionIndex = 0;
+						_questionIndex = 0;
 					}
 					else
 					{
-						_gameplayScreen.SetupGameplayScreen(QuestionIndex);
-						_gameplayScreen.gameObject.SetActive(true);
+						var question = GetQuestion(_questionIndex);
+						
+						SetupGameplayScreenRpc(_questionIndex, _totalQuestions, question);
 					}
 					break;
 				
 				case InnerScreensType.EndRound:
+					_localTimeLeft = _endRoundTimerDuration;
+					
 					if (IsHost)
 					{
 						AnswerCalculation();
@@ -150,17 +154,22 @@ namespace Quiz
 						SetupEndRoundRpc(playerData.Values.ToArray());
 					}
 					
-					QuestionIndex++;
-
-					if (IsHost)
-					{
-						CurrentQuestion.Value = GetQuestion(QuestionIndex);
-					}
+					_questionIndex++;
 					
 					break;
 			}
 
 			_currentInnerScreen = newInnerScreen;
+			_lastSyncTime = 0;
+		}
+
+		[Rpc(SendTo.ClientsAndHost)]
+		private void SetupGameplayScreenRpc(int questionIndex, int totalQuestions, FixedString128Bytes question)
+		{
+			_gameplayScreen.ClearAnswers();
+			_playersAnswersDic.Clear();
+			
+			_gameplayScreen.SetupGameplayScreen(questionIndex, totalQuestions, question.Value);
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -170,31 +179,11 @@ namespace Quiz
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		private void SetupInnerScreenRpc(InnerScreensType innerScreensType)
+		private void DisableCurrentScreenRpc(InnerScreensType currentScreen)
 		{
-			SetupInnerScreen(innerScreensType);
-		}
-		
-		private void SetupInnerScreen(InnerScreensType innerScreensType)
-		{
-			switch (innerScreensType)
-			{
-				case InnerScreensType.None:
-					break;
-				case InnerScreensType.Gameplay:
-					_localTimeLeft = _gameplayTimerDuration;
-					_gameplayScreen.ClearAnswers();
-					_playersAnswersDic.Clear();
-					GameManager.Instance.ClearPLayerDataAnswers();
-
-					break;
-				case InnerScreensType.EndRound:
-					_localTimeLeft = _endRoundTimerDuration;
-					
-					break;
-			}
-
-			_lastSyncTime = 0;
+			var currentScreenGameObj = GetCurrentScreenGameObject(currentScreen);
+			if (currentScreenGameObj == null) return;
+			currentScreenGameObj.SetActive(false);
 		}
 
 		private GameObject GetCurrentScreenGameObject(InnerScreensType innerScreensType)
@@ -202,7 +191,7 @@ namespace Quiz
 			switch (innerScreensType)
 			{
 				case InnerScreensType.None:
-					break;
+					return null;
 				case InnerScreensType.Gameplay:
 					return _gameplayScreen.gameObject;
 				case InnerScreensType.EndRound:
@@ -214,9 +203,9 @@ namespace Quiz
 
 		private void AnswerCalculation()
 		{
-			var correctAnswers = GetCorrectAnswers(QuestionIndex);
+			var correctAnswers = GetCorrectAnswers(_questionIndex);
 			var playersData = GameManager.Instance.GetPlayersData();
-			var maxAnswerPoints = GetMaxAnswerPoints(QuestionIndex);
+			var maxAnswerPoints = GetMaxAnswerPoints(_questionIndex);
 
 			var n = 1;
 			foreach (var player in _playersAnswersDic)

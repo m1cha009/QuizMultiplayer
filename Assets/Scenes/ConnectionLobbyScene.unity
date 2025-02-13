@@ -5671,9 +5671,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   _questionsPool: {fileID: 11400000, guid: 897f2bacee7ef604cb725e5cc4caee22, type: 2}
-  _useWebQuestions: 1
+  _useWebQuestions: 0
   _gameplayScreen: {fileID: 1676975944}
   _endRoundObject: {fileID: 1476416288}
+  _gameplayTimerDuration: 5
 --- !u!1 &1156732609
 GameObject:
   m_ObjectHideFlags: 0
@@ -7729,7 +7730,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5887cbbce99f4e9896fdced10723d57a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShowTopMostFoldoutHeaderGroup: 1
   _endRoundPlayerPrefab: {fileID: 1822586014074954022, guid: da09e54053ec49c41b65a6bb66b37a63, type: 3}
   _rootParent: {fileID: 773517381}
   _timer: {fileID: 1276385829}

@@ -2,38 +2,25 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class GameplayScreen : MonoBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents
+	public class GameplayScreen : MonoBehaviour
 	{
 		[SerializeField] private QuestionsPanel _questionsPanel;
 		[SerializeField] private Timer _timer;
 		[SerializeField] private PlayerListPanel _playerListPanel;
 
-		private void Start()
-		{
-			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
-		}
-
 		private void OnDisable()
 		{
 			GamePlayManager.Instance.OnTimeChanged -= _timer.SetTimer;
 		}
-
-		public void OnGameplayStarted()
-		{
-			_questionsPanel.SetTotalQuestions(GamePlayManager.Instance.TotalQuestions.Value);
-			SetupGameplayScreen(0);
-		}
-
-		public void OnGameplayStopped()
-		{
-			GamePlayManager.Instance.OnTimeChanged -= _timer.SetTimer;
-		}
 		
-		public void SetupGameplayScreen(int questionIndex)
+		public void SetupGameplayScreen(int questionIndex, int totalQuestions, string question)
 		{
-			_questionsPanel.SetupQuestionPanel(questionIndex);
+			_questionsPanel.SetTotalQuestions(totalQuestions);
+			_questionsPanel.SetupQuestionPanel(questionIndex, question);
 			
 			GamePlayManager.Instance.OnTimeChanged += _timer.SetTimer;
+			
+			gameObject.SetActive(true);
 		}
 
 		public void ClearAnswers()
