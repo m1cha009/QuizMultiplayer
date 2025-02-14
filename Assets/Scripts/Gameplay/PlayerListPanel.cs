@@ -131,11 +131,11 @@ namespace Quiz
 
 		private void OnPlayerClicked(Player playerClicked)
 		{
-			if (_skillsManager.SelectedSkill != SkillType.None)
+			if (_skillsManager.SelectedSkillType != SkillType.None)
 			{
 				playerClicked.SetSkillTargetColor(false);
 
-				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkill);
+				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType);
 			}
 		}
 

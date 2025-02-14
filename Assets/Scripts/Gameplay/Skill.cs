@@ -1,6 +1,7 @@
 using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace Quiz
@@ -11,6 +12,7 @@ namespace Quiz
 		[SerializeField] private SkillType _skillType;
 		[SerializeField] private Button _skillButton;
 		[SerializeField] private TMP_Text _priceText;
+		[SerializeField] private TMP_Text _skillNameText;
 
 		private ButtonEventsHandler _buttonEventsHandler;
 
@@ -18,24 +20,50 @@ namespace Quiz
 
 		private void Awake()
 		{
+			if (_skillType == SkillType.None)
+			{
+				_skillNameText.SetText(string.Empty);
+				_priceText.SetText(string.Empty);
+				_skillButton.interactable = false;
+				gameObject.SetActive(false);
+				
+				return;
+			}
+			
+			_priceText.SetText($"{_price}");
+			
 			_buttonEventsHandler = _skillButton.GetComponent<ButtonEventsHandler>();
 			
 			_skillButton.onClick.AddListener(OnSkillClicked);
-			_priceText.SetText($"{_price}");
 		}
 
 		private void OnDestroy()
 		{
+			if (_skillButton == null)
+			{
+				return;
+			}
+			
 			_skillButton.onClick.RemoveListener(OnSkillClicked);
 		}
+		
+		public void SetName(string name) => _skillNameText.SetText(name);
+		
 		public void SetupSkill(Tooltip tooltip)
 		{
+			if (_buttonEventsHandler == null)
+			{
+				return;
+			}
+			
 			_buttonEventsHandler.SetTooltip(tooltip);
 		}
-		
+
 		private void OnSkillClicked()
 		{
 			SelectSkillEvent?.Invoke(_skillType);
+			
+			EventSystem.current.SetSelectedGameObject(null);
 		}
 	}
 }

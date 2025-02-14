@@ -6,11 +6,12 @@ namespace Quiz
 	public class SkillsManager : MonoBehaviour
 	{
 		[SerializeField] private Tooltip _tooltip;
+		[SerializeField] private Skill _selectedSkill;
 		[SerializeField] private List<Skill> _skills;
 
-		private SkillType _selectedSkill = SkillType.None;
+		private SkillType _selectedSkillType = SkillType.None;
 
-		public SkillType SelectedSkill => _selectedSkill;
+		public SkillType SelectedSkillType => _selectedSkillType;
 
 		private void Awake()
 		{
@@ -36,12 +37,18 @@ namespace Quiz
 
 		public void ResetSkills()
 		{
-			_selectedSkill = SkillType.None;
+			_selectedSkillType = SkillType.None;
+			
+			_selectedSkill.SetName(string.Empty);
+			_selectedSkill.gameObject.SetActive(false);
 		}
 		
 		private void OnSkillSelected(SkillType skillType)
 		{
-			_selectedSkill = skillType;
+			_selectedSkillType = skillType;
+			
+			_selectedSkill.SetName(_selectedSkillType.ToString());
+			_selectedSkill.gameObject.SetActive(true);
 		}
 	}
 }
