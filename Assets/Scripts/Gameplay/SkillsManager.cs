@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Quiz
@@ -13,6 +14,8 @@ namespace Quiz
 
 		public bool IsSkillUsed { get; set; }
 		public SkillType SelectedSkillType => _selectedSkillType;
+
+		public int SkillPrice => _skills.FirstOrDefault(x => x.SkillType == _selectedSkillType)!.SkillPrice;
 
 		private void Awake()
 		{

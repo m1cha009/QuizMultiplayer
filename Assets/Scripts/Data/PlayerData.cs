@@ -14,6 +14,7 @@ namespace Quiz
 		private int _totalPoints;
 		private SkillType _skillType;
 		private int _skillPoints;
+		private int _skillPrice;
 
 		public string PlayerId
 		{
@@ -55,6 +56,12 @@ namespace Quiz
 			set => _skillPoints = value;
 		}
 		
+		public int SkillPrice
+		{
+			get => _skillPrice;
+			set => _skillPrice = value;
+		}
+		
 		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 		{
 			serializer.SerializeValue(ref _playerId);
@@ -64,6 +71,7 @@ namespace Quiz
 			serializer.SerializeValue(ref _totalPoints);
 			serializer.SerializeValue(ref _skillType);
 			serializer.SerializeValue(ref _skillPoints);
+			serializer.SerializeValue(ref _skillPrice);
 		}
 	}
 }

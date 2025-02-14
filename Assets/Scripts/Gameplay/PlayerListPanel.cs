@@ -81,10 +81,17 @@ namespace Quiz
 		}
 
 		[Rpc(SendTo.Server)]
-		private void SetNetworkSkillTypeRpc(string playerId, SkillType skillType)
+		private void ServerSetTargetSkillTypeRpc(string playerId, SkillType skillType)
 		{
 			_playersDataDic.TryGetValue(playerId, out var playerData);
 			if (playerData == null) return; playerData.SkillType = skillType;
+		}
+		
+		[Rpc(SendTo.Server)]
+		private void ServerSetLocalSkillPriceRpc(string playerId, int skillPrice)
+		{
+			_playersDataDic.TryGetValue(playerId, out var playerData);
+			if (playerData == null) return; playerData.SkillPrice = skillPrice;
 		}
 
 		public void ClearPlayerState()
@@ -144,8 +151,10 @@ namespace Quiz
 				clickedPlayer.SetSkillTargetColor(false); // for local player set selected player color
 
 				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType); // for all display that user has used skill
+				ServerSetLocalSkillPriceRpc(_localPlayerId, _skillsManager.SkillPrice);
+				Debug.Log($"Skill price on click: {_skillsManager.SkillPrice}");
 
-				SetNetworkSkillTypeRpc(clickedPlayerId, _skillsManager.SelectedSkillType);
+				ServerSetTargetSkillTypeRpc(clickedPlayerId, _skillsManager.SelectedSkillType);
 			}
 		}
 

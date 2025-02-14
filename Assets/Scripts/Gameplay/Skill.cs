@@ -17,6 +17,7 @@ namespace Quiz
 		private ButtonEventsHandler _buttonEventsHandler;
 
 		public int SkillPrice => _price;
+		public SkillType SkillType => _skillType;
 
 		public event Action<SkillType> SelectSkillEvent;
 

@@ -216,42 +216,46 @@ namespace Quiz
 				if (playerData == null) continue;
 
 				var isFound = correctAnswers.Contains(playerAnswer);
+				var totalPoints = -playerData.SkillPrice;
 
 				if (!isFound)
 				{
 					playerData.AnswerPoints = 0;
-					
-					continue;
+					playerData.SkillPoints = totalPoints;
 				}
-
-				var answerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
-				playerData.AnswerPoints = answerPoints;
-
-				switch (playerData.SkillType)
+				else
 				{
-					case SkillType.None:
-						playerData.SkillPoints = answerPoints;
-						break;
-					case SkillType.X2:
-						playerData.SkillPoints = answerPoints * 2;
-						break;
-					case SkillType.Resist:
-						playerData.SkillPoints = answerPoints;
-						break;
+					var correctAnswerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
+					playerData.AnswerPoints = correctAnswerPoints;
+					
+					totalPoints += correctAnswerPoints;
+
+					if (playerData.SkillType == SkillType.X2)
+					{
+						totalPoints *= 2;
+						playerData.SkillPoints = totalPoints;
+					}
 				}
 				
-				UpdateTotalPointsRpc(playerId, playerData.SkillPoints);
+				UpdateTotalPointsRpc(playerId, totalPoints);
 				
 				n++;
 			}
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		private void UpdateTotalPointsRpc(string playerId, int answerPoints)
+		private void UpdateTotalPointsRpc(string playerId, int totalPoints)
 		{
 			if (_playerDataDic.TryGetValue(playerId, out var playerData))
 			{
-				playerData.TotalPoints += answerPoints;
+				if (playerData.TotalPoints + totalPoints < 0)
+				{
+					playerData.TotalPoints = 0;
+				}
+				else
+				{
+					playerData.TotalPoints += totalPoints;
+				}
 			}
 		}
 		
