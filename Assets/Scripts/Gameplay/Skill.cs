@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using Button = UnityEngine.UI.Button;
@@ -7,25 +8,28 @@ namespace Quiz
 	public class Skill : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
 	{
 		[SerializeField] private int _price;
-		[SerializeField] private Button _button;
+		[SerializeField] private SkillType _skillType;
+		[SerializeField] private Button _skillButton;
+		[SerializeField] private TMP_Text _priceText;
 
 		private Tooltip _tooltip;
 
 		private void Awake()
 		{
-			_button.onClick.AddListener(OnSkillClicked);
+			_skillButton.onClick.AddListener(OnSkillClicked);
+			_priceText.SetText($"{_price}");
 		}
 
 		private void OnDestroy()
 		{
-			_button.onClick.RemoveListener(OnSkillClicked);
+			_skillButton.onClick.RemoveListener(OnSkillClicked);
 		}
-		
-		
 		public void SetupSkill(Tooltip tooltip)
 		{
 			_tooltip = tooltip;
 		}
+		
+		public SkillType GetSkillType() => _skillType;
 
 		private void OnSkillClicked()
 		{
@@ -49,6 +53,8 @@ namespace Quiz
 		public void OnPointerMove(PointerEventData eventData)
 		{
 			if (_tooltip == null) return;
+			
+			
 			
 			RectTransformUtility.ScreenPointToLocalPointInRectangle(
 				transform.parent as RectTransform,

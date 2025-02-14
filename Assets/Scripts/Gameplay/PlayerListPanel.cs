@@ -68,11 +68,26 @@ namespace Quiz
 			}
 		}
 
+		[Rpc(SendTo.ClientsAndHost)]
+		public void SetPlayerSkillIconRpc(string playerId, SkillType skillType)
+		{
+			if (_playersDic.Count == 0 || !_playersDic.ContainsKey(playerId))
+			{
+				Debug.Log($"Player {playerId} not found");
+				
+				return;
+			}
+
+			_playersDic.TryGetValue(playerId, out var player);
+			if (player != null) player.SetSkillType(true, skillType);
+		}
+
 		public void CleanAnswers()
 		{
 			foreach (var player in _playersDic.Values)
 			{
 				player.SetAnswer(string.Empty);
+				player.SetSkillTargetColor(true);
 			}
 		}
 
@@ -85,7 +100,7 @@ namespace Quiz
 
 				if (_playersDataDic.TryGetValue(playerId, out var playerData))
 				{
-					player.SetPoints(playerData.TotalPoints);
+					player.SetTotalPoints(playerData.TotalPoints);
 				}
 			}
 		}
@@ -106,7 +121,7 @@ namespace Quiz
 			var player = Instantiate(_playerPrefab, transform);
 			player.SetName(playerData.PlayerName);
 			player.SetAnswer(playerData.Answer);
-			player.SetPoints(playerData.TotalPoints);
+			player.SetTotalPoints(playerData.TotalPoints);
 			
 			_playersDic.Add(playerData.PlayerId, player);
 		}
