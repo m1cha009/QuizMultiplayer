@@ -20,7 +20,7 @@ namespace Quiz
 		{
 			DefaultState();
 
-			_startButton.interactable = true;
+			// _startButton.interactable = true;
 		}
 
 		private void OnDestroy()

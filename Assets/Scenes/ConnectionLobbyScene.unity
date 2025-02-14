@@ -6802,11 +6802,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   _questionsPool: {fileID: 11400000, guid: 897f2bacee7ef604cb725e5cc4caee22, type: 2}
-  _useWebQuestions: 0
+  _useWebQuestions: 1
   _gameplayScreen: {fileID: 1676975944}
   _endRoundObject: {fileID: 1476416288}
-  _gameplayTimerDuration: 10
-  _endRoundTimerDuration: 5
+  _gameplayTimerDuration: 20
+  _endRoundTimerDuration: 20
 --- !u!1 &1156732609
 GameObject:
   m_ObjectHideFlags: 0
