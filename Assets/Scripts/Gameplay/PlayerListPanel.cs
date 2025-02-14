@@ -137,8 +137,10 @@ namespace Quiz
 
 		private void OnPlayerClicked(string clickedPlayerId, Player clickedPlayer)
 		{
-			if (_skillsManager.SelectedSkillType != SkillType.None)
+			if (_skillsManager.SelectedSkillType != SkillType.None && !_skillsManager.IsSkillUsed)
 			{
+				_skillsManager.IsSkillUsed = true;
+				
 				clickedPlayer.SetSkillTargetColor(false); // for local player set selected player color
 
 				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType); // for all display that user has used skill

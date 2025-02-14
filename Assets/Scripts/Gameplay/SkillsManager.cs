@@ -11,6 +11,7 @@ namespace Quiz
 
 		private SkillType _selectedSkillType = SkillType.None;
 
+		public bool IsSkillUsed { get; set; }
 		public SkillType SelectedSkillType => _selectedSkillType;
 
 		private void Awake()
@@ -41,6 +42,8 @@ namespace Quiz
 			
 			_selectedSkill.SetName(string.Empty);
 			_selectedSkill.gameObject.SetActive(false);
+
+			IsSkillUsed = false;
 		}
 		
 		private void OnSkillSelected(SkillType skillType)
