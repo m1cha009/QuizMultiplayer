@@ -1,21 +1,25 @@
+using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using Button = UnityEngine.UI.Button;
+using UnityEngine.UI;
 
 namespace Quiz
 {
-	public class Skill : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerMoveHandler
+	public class Skill : MonoBehaviour
 	{
 		[SerializeField] private int _price;
 		[SerializeField] private SkillType _skillType;
 		[SerializeField] private Button _skillButton;
 		[SerializeField] private TMP_Text _priceText;
 
-		private Tooltip _tooltip;
+		private ButtonEventsHandler _buttonEventsHandler;
+
+		public event Action<SkillType> SelectSkillEvent;
 
 		private void Awake()
 		{
+			_buttonEventsHandler = _skillButton.GetComponent<ButtonEventsHandler>();
+			
 			_skillButton.onClick.AddListener(OnSkillClicked);
 			_priceText.SetText($"{_price}");
 		}
@@ -26,44 +30,14 @@ namespace Quiz
 		}
 		public void SetupSkill(Tooltip tooltip)
 		{
-			_tooltip = tooltip;
+			_buttonEventsHandler.SetTooltip(tooltip);
 		}
 		
 		public SkillType GetSkillType() => _skillType;
 
 		private void OnSkillClicked()
 		{
-			// throw new NotImplementedException();
-		}
-
-		public void OnPointerEnter(PointerEventData eventData)
-		{
-			if (_tooltip == null) return;
-
-			_tooltip.Show();
-		}
-
-		public void OnPointerExit(PointerEventData eventData)
-		{
-			if (_tooltip == null) return;
-			
-			_tooltip.Hide();
-		}
-
-		public void OnPointerMove(PointerEventData eventData)
-		{
-			if (_tooltip == null) return;
-			
-			
-			
-			RectTransformUtility.ScreenPointToLocalPointInRectangle(
-				transform.parent as RectTransform,
-				eventData.position,
-				eventData.pressEventCamera,
-				out var localPosition
-			);
-
-			((RectTransform)_tooltip.transform).anchoredPosition = localPosition + _tooltip.TooltipOffset;
+			SelectSkillEvent?.Invoke(_skillType);
 		}
 	}
 }
