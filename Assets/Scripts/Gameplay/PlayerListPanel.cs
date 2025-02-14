@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -82,6 +80,13 @@ namespace Quiz
 			if (player != null) player.SetSkillType(true, skillType);
 		}
 
+		[Rpc(SendTo.Server)]
+		private void SetNetworkSkillTypeRpc(string playerId, SkillType skillType)
+		{
+			_playersDataDic.TryGetValue(playerId, out var playerData);
+			if (playerData == null) return; playerData.SkillType = skillType;
+		}
+
 		public void ClearPlayerState()
 		{
 			foreach (var player in _playersDic.Values)
@@ -120,6 +125,7 @@ namespace Quiz
 			if (!_playersDataDic.TryGetValue(playerId, out var playerData)) return;
 			
 			var player = Instantiate(_playerPrefab, transform);
+			player.SetPlayerId(playerId);
 			player.SetName(_localPlayerId == playerId ? $"{playerData.PlayerName} (YOU)" : playerData.PlayerName);
 			player.SetAnswer(playerData.Answer);
 			player.SetTotalPoints(playerData.TotalPoints);
@@ -129,13 +135,15 @@ namespace Quiz
 			_playersDic.Add(playerData.PlayerId, player);
 		}
 
-		private void OnPlayerClicked(Player playerClicked)
+		private void OnPlayerClicked(string clickedPlayerId, Player clickedPlayer)
 		{
 			if (_skillsManager.SelectedSkillType != SkillType.None)
 			{
-				playerClicked.SetSkillTargetColor(false);
+				clickedPlayer.SetSkillTargetColor(false); // for local player set selected player color
 
-				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType);
+				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType); // for all display that user has used skill
+
+				SetNetworkSkillTypeRpc(clickedPlayerId, _skillsManager.SelectedSkillType);
 			}
 		}
 

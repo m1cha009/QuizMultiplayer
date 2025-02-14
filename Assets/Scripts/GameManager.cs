@@ -117,6 +117,8 @@ namespace Quiz
 			{
 				playerData.Answer = string.Empty;
 				playerData.AnswerPoints = 0;
+				playerData.SkillType = SkillType.None;
+				playerData.SkillPoints = 0;
 			}
 		}
 		

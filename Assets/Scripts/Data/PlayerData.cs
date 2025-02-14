@@ -12,6 +12,8 @@ namespace Quiz
 		private FixedString128Bytes _answer;
 		private int _answerPoints;
 		private int _totalPoints;
+		private SkillType _skillType;
+		private int _skillPoints;
 
 		public string PlayerId
 		{
@@ -41,6 +43,18 @@ namespace Quiz
 			set => _totalPoints = value;
 		}
 		
+		public SkillType SkillType
+		{
+			get => _skillType;
+			set => _skillType = value;
+		}
+		
+		public int SkillPoints
+		{
+			get => _skillPoints;
+			set => _skillPoints = value;
+		}
+		
 		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 		{
 			serializer.SerializeValue(ref _playerId);
@@ -48,6 +62,8 @@ namespace Quiz
 			serializer.SerializeValue(ref _answer);
 			serializer.SerializeValue(ref _answerPoints);
 			serializer.SerializeValue(ref _totalPoints);
+			serializer.SerializeValue(ref _skillType);
+			serializer.SerializeValue(ref _skillPoints);
 		}
 	}
 }

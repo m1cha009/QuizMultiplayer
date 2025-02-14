@@ -16,6 +16,8 @@ namespace Quiz
 
 		private ButtonEventsHandler _buttonEventsHandler;
 
+		public int SkillPrice => _price;
+
 		public event Action<SkillType> SelectSkillEvent;
 
 		private void Awake()

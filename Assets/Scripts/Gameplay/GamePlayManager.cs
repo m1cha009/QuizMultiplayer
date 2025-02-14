@@ -15,6 +15,7 @@ namespace Quiz
 		[SerializeField] private GameplayScreen _gameplayScreen;
 		[SerializeField] private EndRoundScreen _endRoundObject;
 		[SerializeField] private float _gameplayTimerDuration;
+		[SerializeField] private float _endRoundTimerDuration;
 
 		public event Action<int> OnTimeChanged;
 		
@@ -28,7 +29,6 @@ namespace Quiz
 		private int _totalQuestions;
 		private int _questionIndex;
 
-		private readonly float _endRoundTimerDuration = 2;
 		private readonly Dictionary<string, string> _playersAnswersDic = new();
 		private Dictionary<string, PlayerData> _playerDataDic;
 
@@ -226,8 +226,21 @@ namespace Quiz
 
 				var answerPoints = (int)(maxAnswerPoints * Math.Exp(-0.5f * (n - 1)));
 				playerData.AnswerPoints = answerPoints;
+
+				switch (playerData.SkillType)
+				{
+					case SkillType.None:
+						playerData.SkillPoints = answerPoints;
+						break;
+					case SkillType.X2:
+						playerData.SkillPoints = answerPoints * 2;
+						break;
+					case SkillType.Resist:
+						playerData.SkillPoints = answerPoints;
+						break;
+				}
 				
-				UpdateTotalPointsRpc(playerId, answerPoints);
+				UpdateTotalPointsRpc(playerId, playerData.SkillPoints);
 				
 				n++;
 			}

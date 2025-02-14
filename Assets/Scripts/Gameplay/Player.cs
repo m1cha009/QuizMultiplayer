@@ -15,12 +15,15 @@ namespace Quiz
 		[SerializeField] private Image _pickSkillTargetImage;
 		[SerializeField] private Sprite[] _skillTypeSprites;
 
-		public event Action<Player> PlayerClickEvent;
+		public event Action<string, Player> PlayerClickEvent;
+		private string _playerId;
 
 		private void Awake()
 		{
 			_skillTypeImage.gameObject.SetActive(false);
 		}
+		
+		public void SetPlayerId(string playerId) => _playerId = playerId;
 
 		public void SetName(string name) => _nameText.text = name;
 		public void SetAnswer(string answer) => _answerText.text = answer;
@@ -37,7 +40,7 @@ namespace Quiz
 					_skillTypeImage.sprite = _skillTypeSprites[0];
 					break;
 				case SkillType.Resist:
-					_skillTypeImage.sprite = _skillTypeSprites[1];
+					_skillTypeImage.sprite = _skillTypeSprites[0];
 					break;
 			}
 			
@@ -57,7 +60,7 @@ namespace Quiz
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			PlayerClickEvent?.Invoke(this);
+			PlayerClickEvent?.Invoke(_playerId, this);
 		}
 	}
 }
