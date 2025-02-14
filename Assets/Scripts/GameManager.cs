@@ -110,6 +110,8 @@ namespace Quiz
 		}
 		
 		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
+		
+		public PlayerData GetPlayerData(string playerId) => _playersDataDic[playerId];
 
 		public void ClearPLayerDataAnswers()
 		{

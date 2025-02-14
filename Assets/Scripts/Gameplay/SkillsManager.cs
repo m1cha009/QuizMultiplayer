@@ -3,13 +3,13 @@ using UnityEngine;
 
 namespace Quiz
 {
-	public class SkillsManager : MonoBehaviour
+	public class SkillsManager : MonoBehaviour, IGameplayBaseEvents , IGameplayLifecycleEvents
 	{
 		[SerializeField] private Tooltip _tooltip;
 		[SerializeField] private Skill _selectedSkill;
 		[SerializeField] private List<Skill> _skills;
 
-		private SkillType _selectedSkillType = SkillType.None;
+		private SkillType _selectedSkillType;
 
 		public bool IsSkillUsed { get; set; }
 		public SkillType SelectedSkillType => _selectedSkillType;
@@ -17,6 +17,8 @@ namespace Quiz
 		private void Awake()
 		{
 			_tooltip.Hide();
+			
+			GameplayEventDispatcher.Instance.RegisterGameplayEvents(this);
 		}
 
 		private void Start()
@@ -35,6 +37,13 @@ namespace Quiz
 				skill.SelectSkillEvent -= OnSkillSelected;
 			}
 		}
+		
+		public void OnGameplayStarted()
+		{
+			ResetSkills();
+		}
+
+		public void OnGameplayStopped() { }
 
 		public void ResetSkills()
 		{
@@ -42,6 +51,21 @@ namespace Quiz
 			
 			_selectedSkill.SetName(string.Empty);
 			_selectedSkill.gameObject.SetActive(false);
+
+			var playerId = GameManager.Instance.CurrentPlayerId;
+			var playerData = GameManager.Instance.GetPlayerData(playerId);
+			
+			foreach (var skill in _skills)
+			{
+				if (skill.SkillPrice > playerData.TotalPoints)
+				{
+					skill.Disable();
+				}
+				else
+				{
+					skill.Enable();
+				}
+			}
 
 			IsSkillUsed = false;
 		}
@@ -53,5 +77,7 @@ namespace Quiz
 			_selectedSkill.SetName(_selectedSkillType.ToString());
 			_selectedSkill.gameObject.SetActive(true);
 		}
+
+
 	}
 }

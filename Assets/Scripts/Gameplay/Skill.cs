@@ -48,7 +48,19 @@ namespace Quiz
 			
 			_skillButton.onClick.RemoveListener(OnSkillClicked);
 		}
-		
+
+		public void Enable()
+		{
+			_skillButton.interactable = true;
+			_buttonEventsHandler.TriggerTooltipActivity(false);
+		}
+
+		public void Disable()
+		{
+			_skillButton.interactable = false;
+			_buttonEventsHandler.TriggerTooltipActivity(true);
+		}
+
 		public void SetName(string name) => _skillNameText.SetText(name);
 		
 		public void SetupSkill(Tooltip tooltip)
