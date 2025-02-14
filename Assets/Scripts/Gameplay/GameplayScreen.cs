@@ -7,6 +7,7 @@ namespace Quiz
 		[SerializeField] private QuestionsPanel _questionsPanel;
 		[SerializeField] private Timer _timer;
 		[SerializeField] private PlayerListPanel _playerListPanel;
+		[SerializeField] private SkillsManager _skillsManager;
 
 		private void OnDisable()
 		{
@@ -15,18 +16,14 @@ namespace Quiz
 		
 		public void SetupGameplayScreen(int questionIndex, int totalQuestions, string question)
 		{
+			_playerListPanel.ClearPlayerState();
 			_playerListPanel.UpdateTotalPoints();
-			_questionsPanel.SetTotalQuestions(totalQuestions);
-			_questionsPanel.SetupQuestionPanel(questionIndex, question);
+			_questionsPanel.SetupQuestionPanel(questionIndex, question, totalQuestions);
+			_skillsManager.ResetSkills();
 			
 			GamePlayManager.Instance.OnTimeChanged += _timer.SetTimer;
 			
 			gameObject.SetActive(true);
-		}
-
-		public void ClearAnswers()
-		{
-			_playerListPanel.CleanAnswers();
 		}
 	}
 }

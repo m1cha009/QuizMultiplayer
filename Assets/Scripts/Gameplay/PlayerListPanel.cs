@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,9 +9,12 @@ namespace Quiz
 	public class PlayerListPanel : NetworkBehaviour, IGameplayBaseEvents, IGameplayLifecycleEvents, ISessionEvents
 	{
 		[SerializeField] private Player _playerPrefab;
+		[SerializeField] private SkillsManager _skillsManager;
 
 		private Dictionary<string, PlayerData> _playersDataDic;
 		private readonly Dictionary<string, Player> _playersDic = new();
+
+		private string _localPlayerId;
 
 		private void Start()
 		{
@@ -26,6 +31,8 @@ namespace Quiz
 				
 				return;
 			}
+
+			_localPlayerId = GameManager.Instance.CurrentPlayerId;
 			
 			InitializePlayers(_playersDataDic);
 		}
@@ -69,25 +76,19 @@ namespace Quiz
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		public void SetPlayerSkillIconRpc(string playerId, SkillType skillType)
+		private void SetPlayerSkillIconRpc(string playerId, SkillType skillType)
 		{
-			if (_playersDic.Count == 0 || !_playersDic.ContainsKey(playerId))
-			{
-				Debug.Log($"Player {playerId} not found");
-				
-				return;
-			}
-
 			_playersDic.TryGetValue(playerId, out var player);
 			if (player != null) player.SetSkillType(true, skillType);
 		}
 
-		public void CleanAnswers()
+		public void ClearPlayerState()
 		{
 			foreach (var player in _playersDic.Values)
 			{
 				player.SetAnswer(string.Empty);
 				player.SetSkillTargetColor(true);
+				player.SetSkillType(false, SkillType.None);
 			}
 		}
 
@@ -119,11 +120,23 @@ namespace Quiz
 			if (!_playersDataDic.TryGetValue(playerId, out var playerData)) return;
 			
 			var player = Instantiate(_playerPrefab, transform);
-			player.SetName(playerData.PlayerName);
+			player.SetName(_localPlayerId == playerId ? $"{playerData.PlayerName} (YOU)" : playerData.PlayerName);
 			player.SetAnswer(playerData.Answer);
 			player.SetTotalPoints(playerData.TotalPoints);
+			player.SetSkillTargetColor(true);
+			player.PlayerClickEvent += OnPlayerClicked;
 			
 			_playersDic.Add(playerData.PlayerId, player);
+		}
+
+		private void OnPlayerClicked(Player playerClicked)
+		{
+			if (_skillsManager.SelectedSkill != SkillType.None)
+			{
+				playerClicked.SetSkillTargetColor(false);
+
+				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkill);
+			}
 		}
 
 		private void DeInitializePlayer(string playerId)
@@ -131,6 +144,8 @@ namespace Quiz
 			if (_playersDic.TryGetValue(playerId, out var player))
 			{
 				Debug.Log($"Player {playerId} deInitialized from PlayerListPanel");
+				
+				player.PlayerClickEvent -= OnPlayerClicked;
 				
 				Destroy(player.gameObject);
 				_playersDic.Remove(playerId);

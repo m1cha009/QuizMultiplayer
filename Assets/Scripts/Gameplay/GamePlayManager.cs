@@ -167,7 +167,6 @@ namespace Quiz
 		[Rpc(SendTo.ClientsAndHost)]
 		private void SetupGameplayScreenRpc(int questionIndex, int totalQuestions, FixedString128Bytes question)
 		{
-			_gameplayScreen.ClearAnswers();
 			_playersAnswersDic.Clear();
 			
 			_gameplayScreen.SetupGameplayScreen(questionIndex, totalQuestions, question.Value);

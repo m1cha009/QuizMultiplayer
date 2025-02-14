@@ -28,10 +28,8 @@ namespace Quiz
 			DefaultState();
 		}
 
-		private async void OnStartButtonClicked() // host button
+		private void OnStartButtonClicked() // host button
 		{
-			// await GamePlayManager.Instance.SetQuestions();
-			
 			GameManager.Instance.ChangeScreenRpc(ScreensType.GamePlay);
 		}
 

@@ -8,9 +8,7 @@ namespace Quiz
 		[SerializeField] private TMP_Text _amountText;
 		[SerializeField] private TMP_Text _questionText;
 
-		private int _totalQuestions;
-
-		public void SetupQuestionPanel(int questionIndex, string question)
+		public void SetupQuestionPanel(int questionIndex, string question, int totalQuestions)
 		{
 			if (GamePlayManager.Instance.IsHost)
 			{
@@ -18,13 +16,8 @@ namespace Quiz
 				Debug.Log($"Correct answers: {string.Join(",", answers)}");
 			}
 			
-			_amountText.SetText($"{questionIndex + 1} / {_totalQuestions}");
+			_amountText.SetText($"{questionIndex + 1} / {totalQuestions}");
 			_questionText.SetText($"{question}");
-		}
-
-		public void SetTotalQuestions(int totalQuestions)
-		{
-			_totalQuestions = totalQuestions;
 		}
 	}
 }

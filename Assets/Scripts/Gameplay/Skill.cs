@@ -33,8 +33,6 @@ namespace Quiz
 			_buttonEventsHandler.SetTooltip(tooltip);
 		}
 		
-		public SkillType GetSkillType() => _skillType;
-
 		private void OnSkillClicked()
 		{
 			SelectSkillEvent?.Invoke(_skillType);

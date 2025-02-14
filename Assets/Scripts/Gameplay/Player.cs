@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -13,6 +14,8 @@ namespace Quiz
 		[SerializeField] private Image _skillTypeImage;
 		[SerializeField] private Image _pickSkillTargetImage;
 		[SerializeField] private Sprite[] _skillTypeSprites;
+
+		public event Action<Player> PlayerClickEvent;
 
 		private void Awake()
 		{
@@ -33,6 +36,9 @@ namespace Quiz
 				case SkillType.X2:
 					_skillTypeImage.sprite = _skillTypeSprites[0];
 					break;
+				case SkillType.Resist:
+					_skillTypeImage.sprite = _skillTypeSprites[1];
+					break;
 			}
 			
 			_skillTypeImage.gameObject.SetActive(isOn);
@@ -51,7 +57,7 @@ namespace Quiz
 
 		public void OnPointerClick(PointerEventData eventData)
 		{
-			SetSkillTargetColor(false);
+			PlayerClickEvent?.Invoke(this);
 		}
 	}
 }
