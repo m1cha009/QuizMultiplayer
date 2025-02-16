@@ -121,6 +121,7 @@ namespace Quiz
 				playerData.AnswerPoints = 0;
 				playerData.SkillType = SkillType.None;
 				playerData.SkillPoints = 0;
+				playerData.SkillPrice = 0;
 			}
 		}
 		

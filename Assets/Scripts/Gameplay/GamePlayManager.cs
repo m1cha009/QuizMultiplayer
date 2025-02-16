@@ -88,11 +88,14 @@ namespace Quiz
 		[Rpc(SendTo.ClientsAndHost)]
 		public void SetPlayerAnswerRpc(string playerId, string answer)
 		{
-			if (!_playersAnswersDic.TryAdd(playerId, answer))
+			if (!_playersAnswersDic.ContainsKey(playerId))
 			{
-				_playersAnswersDic.Remove(playerId);
-				_playersAnswersDic.Add(playerId, answer);
+				Debug.LogError($"Player {playerId} doesn't exist");
+				return;
 			}
+			
+			_playersAnswersDic.Remove(playerId);
+			_playersAnswersDic.Add(playerId, answer);
 		}
 
 		public async UniTask SetQuestions()
@@ -169,6 +172,11 @@ namespace Quiz
 		{
 			_playersAnswersDic.Clear();
 			
+			foreach (var playerId in _playerDataDic.Keys)
+			{
+				_playersAnswersDic.Add(playerId, string.Empty);
+			}
+			
 			_gameplayScreen.SetupGameplayScreen(questionIndex, totalQuestions, question.Value);
 		}
 
@@ -235,26 +243,26 @@ namespace Quiz
 						totalPoints *= 2;
 						playerData.SkillPoints = totalPoints;
 					}
+					
+					n++;
 				}
 				
 				UpdateTotalPointsRpc(playerId, totalPoints);
-				
-				n++;
 			}
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		private void UpdateTotalPointsRpc(string playerId, int totalPoints)
+		private void UpdateTotalPointsRpc(string playerId, int pointsGained)
 		{
 			if (_playerDataDic.TryGetValue(playerId, out var playerData))
 			{
-				if (playerData.TotalPoints + totalPoints < 0)
+				if (playerData.TotalPoints + pointsGained < 0)
 				{
 					playerData.TotalPoints = 0;
 				}
 				else
 				{
-					playerData.TotalPoints += totalPoints;
+					playerData.TotalPoints += pointsGained;
 				}
 			}
 		}

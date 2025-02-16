@@ -19,7 +19,7 @@ MonoBehaviour:
       - viva
       category: names
       language: en
-      points: 500
+      points: 600
       question: What's my name?
       wrong_answers:
       - Petras
@@ -27,7 +27,7 @@ MonoBehaviour:
       - 2025
       category: names
       language: lt
-      points: 500
+      points: 1000
       question: kuries dabar metai?
       wrong_answers:
       - 2024
@@ -36,7 +36,7 @@ MonoBehaviour:
       - ne mazai
       category: names
       language: lt
-      points: 500
+      points: 800
       question: kiek ryziu reeikia kad pavalgyt?
       wrong_answers:
       - 1

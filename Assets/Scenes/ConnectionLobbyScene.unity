@@ -7068,7 +7068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3442ca3a0bf40759a14cd2bf085ee7b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _price: 800
+  _price: 500
   _skillType: 1
   _skillButton: {fileID: 1193340747}
   _priceText: {fileID: 1110454313}
