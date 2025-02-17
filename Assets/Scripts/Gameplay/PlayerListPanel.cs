@@ -84,7 +84,7 @@ namespace Quiz
 		private void ServerSetTargetSkillTypeRpc(string playerId, SkillType skillType)
 		{
 			_playersDataDic.TryGetValue(playerId, out var playerData);
-			if (playerData == null) return; playerData.SkillType = skillType;
+			if (playerData == null) return; playerData.AddSkillType(skillType);
 		}
 		
 		[Rpc(SendTo.Server)]
@@ -152,7 +152,6 @@ namespace Quiz
 
 				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType); // for all display that user has used skill
 				ServerSetLocalSkillPriceRpc(_localPlayerId, _skillsManager.SkillPrice);
-				Debug.Log($"Skill price on click: {_skillsManager.SkillPrice}");
 
 				ServerSetTargetSkillTypeRpc(clickedPlayerId, _skillsManager.SelectedSkillType);
 			}

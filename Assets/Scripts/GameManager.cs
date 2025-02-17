@@ -119,7 +119,13 @@ namespace Quiz
 			{
 				playerData.Answer = string.Empty;
 				playerData.AnswerPoints = 0;
-				playerData.SkillType = SkillType.None;
+				
+				for (var i = 0; i < playerData.SkillTypes.Length; i++)
+				{
+					playerData.SkillTypes[i] = SkillType.None;
+				}
+
+				playerData.SkillIndex = 0;
 				playerData.SkillPoints = 0;
 				playerData.SkillPrice = 0;
 			}

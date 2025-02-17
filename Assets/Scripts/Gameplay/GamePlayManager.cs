@@ -238,10 +238,18 @@ namespace Quiz
 					
 					totalPoints += correctAnswerPoints;
 
-					if (playerData.SkillType == SkillType.X2)
+					foreach (var skillType in playerData.SkillTypes)
 					{
-						totalPoints *= 2;
-						playerData.SkillPoints = totalPoints;
+						if (skillType == SkillType.None)
+						{
+							continue;
+						}
+						
+						if (skillType == SkillType.X2)
+						{
+							totalPoints *= 2;
+							playerData.SkillPoints = totalPoints;
+						}
 					}
 					
 					n++;

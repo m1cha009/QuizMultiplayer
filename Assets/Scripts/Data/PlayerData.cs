@@ -12,9 +12,10 @@ namespace Quiz
 		private FixedString128Bytes _answer;
 		private int _answerPoints;
 		private int _totalPoints;
-		private SkillType _skillType;
+		private SkillType[] _skillTypes;
 		private int _skillPoints;
 		private int _skillPrice;
+		private int _skillIndex;
 
 		public string PlayerId
 		{
@@ -44,12 +45,20 @@ namespace Quiz
 			set => _totalPoints = value;
 		}
 		
-		public SkillType SkillType
+		public SkillType[] SkillTypes
 		{
-			get => _skillType;
-			set => _skillType = value;
+			get
+			{
+				if (_skillTypes == null)
+				{
+					_skillTypes = new SkillType[6];
+				}
+				
+				return _skillTypes;
+			}
+			set => _skillTypes = value;
 		}
-		
+
 		public int SkillPoints
 		{
 			get => _skillPoints;
@@ -62,6 +71,12 @@ namespace Quiz
 			set => _skillPrice = value;
 		}
 		
+		public int SkillIndex
+		{
+			get => _skillIndex;
+			set => _skillIndex = value;
+		}
+		
 		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
 		{
 			serializer.SerializeValue(ref _playerId);
@@ -69,9 +84,18 @@ namespace Quiz
 			serializer.SerializeValue(ref _answer);
 			serializer.SerializeValue(ref _answerPoints);
 			serializer.SerializeValue(ref _totalPoints);
-			serializer.SerializeValue(ref _skillType);
+			serializer.SerializeValue(ref _skillTypes);
 			serializer.SerializeValue(ref _skillPoints);
 			serializer.SerializeValue(ref _skillPrice);
+			serializer.SerializeValue(ref _skillIndex);
+		}
+
+		public void AddSkillType(SkillType skillType)
+		{
+			_skillTypes ??= new SkillType[6];
+
+			_skillTypes[_skillIndex] = skillType;
+			_skillIndex++;
 		}
 	}
 }
