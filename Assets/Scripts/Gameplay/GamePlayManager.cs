@@ -240,16 +240,21 @@ namespace Quiz
 
 					foreach (var skillType in playerData.SkillTypes)
 					{
-						if (skillType == SkillType.None)
+						switch (skillType)
 						{
-							continue;
+							case SkillType.None:
+								continue;
+							case SkillType.X2:
+								totalPoints *= 2;
+								break;
+							case SkillType.Resist:
+								break;
+							case SkillType.Reverse:
+								totalPoints *= -1;
+								break;
 						}
 						
-						if (skillType == SkillType.X2)
-						{
-							totalPoints *= 2;
-							playerData.SkillPoints = totalPoints;
-						}
+						playerData.SkillPoints = totalPoints;
 					}
 					
 					n++;

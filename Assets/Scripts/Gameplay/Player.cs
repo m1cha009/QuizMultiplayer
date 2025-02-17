@@ -42,6 +42,9 @@ namespace Quiz
 				case SkillType.Resist:
 					_skillTypeImage.sprite = _skillTypeSprites[0];
 					break;
+				case SkillType.Reverse:
+					_skillTypeImage.sprite = _skillTypeSprites[1];
+					break;
 			}
 			
 			_skillTypeImage.gameObject.SetActive(isOn);
