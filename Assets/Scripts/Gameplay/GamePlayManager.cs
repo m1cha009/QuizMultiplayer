@@ -1,5 +1,7 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using Cysharp.Threading.Tasks;
 using Unity.Collections;
@@ -29,7 +31,7 @@ namespace Quiz
 		private int _totalQuestions;
 		private int _questionIndex;
 
-		private readonly Dictionary<string, string> _playersAnswersDic = new();
+		private readonly OrderedDictionary _orderedAnswersDic = new();
 		private Dictionary<string, PlayerData> _playerDataDic;
 
 		private string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
@@ -85,17 +87,17 @@ namespace Quiz
 			_isGameplayStarted = false;
 		}
 		
-		[Rpc(SendTo.ClientsAndHost)]
-		public void SetPlayerAnswerRpc(string playerId, string answer)
+		[Rpc(SendTo.Server)]
+		public void AddOrderedAnswerRpc(string playerId, string answer)
 		{
-			if (!_playersAnswersDic.ContainsKey(playerId))
+			if (!_orderedAnswersDic.Contains(playerId))
 			{
 				Debug.LogError($"Player {playerId} doesn't exist");
 				return;
 			}
 			
-			_playersAnswersDic.Remove(playerId);
-			_playersAnswersDic.Add(playerId, answer);
+			_orderedAnswersDic.Remove(playerId);
+			_orderedAnswersDic.Add(playerId, answer);
 		}
 
 		public async UniTask SetQuestions()
@@ -170,11 +172,14 @@ namespace Quiz
 		[Rpc(SendTo.ClientsAndHost)]
 		private void SetupGameplayScreenRpc(int questionIndex, int totalQuestions, FixedString128Bytes question)
 		{
-			_playersAnswersDic.Clear();
-			
-			foreach (var playerId in _playerDataDic.Keys)
+			if (IsHost)
 			{
-				_playersAnswersDic.Add(playerId, string.Empty);
+				_orderedAnswersDic.Clear();
+			
+				foreach (var playerId in _playerDataDic.Keys)
+				{
+					_orderedAnswersDic.Add(playerId, string.Empty);
+				}
 			}
 			
 			_gameplayScreen.SetupGameplayScreen(questionIndex, totalQuestions, question.Value);
@@ -211,14 +216,18 @@ namespace Quiz
 
 		private void AnswerCalculation()
 		{
+			Debug.Log($"Answers Calculation");
+			
 			var correctAnswers = GetCorrectAnswers(_questionIndex);
 			var maxAnswerPoints = GetMaxAnswerPoints(_questionIndex);
-
+			
 			var n = 1;
-			foreach (var player in _playersAnswersDic)
+			foreach (DictionaryEntry player in _orderedAnswersDic)
 			{
-				var playerId = player.Key;
-				var playerAnswer = player.Value;
+				Debug.Log($"PlayerID: {player.Key}, Answers {player.Value}");
+				
+				var playerId = player.Key.ToString();
+				var playerAnswer = player.Value.ToString();
 				
 				_playerDataDic.TryGetValue(playerId, out var playerData);
 				if (playerData == null) continue;

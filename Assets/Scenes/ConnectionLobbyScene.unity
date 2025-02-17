@@ -6806,7 +6806,7 @@ MonoBehaviour:
   _gameplayScreen: {fileID: 1676975944}
   _endRoundObject: {fileID: 1476416288}
   _gameplayTimerDuration: 20
-  _endRoundTimerDuration: 40
+  _endRoundTimerDuration: 10
 --- !u!1 &1156732609
 GameObject:
   m_ObjectHideFlags: 0
