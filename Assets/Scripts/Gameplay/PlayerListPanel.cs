@@ -151,7 +151,7 @@ namespace Quiz
 				clickedPlayer.SetSkillTargetColor(false); // for local player set selected player color
 
 				SetPlayerSkillIconRpc(_localPlayerId, _skillsManager.SelectedSkillType); // for all display that user has used skill
-				ServerSetLocalSkillPriceRpc(_localPlayerId, _skillsManager.SkillPrice);
+				ServerSetLocalSkillPriceRpc(_localPlayerId, _skillsManager.SelectedSkillPrice);
 
 				ServerSetTargetSkillTypeRpc(clickedPlayerId, _skillsManager.SelectedSkillType);
 			}

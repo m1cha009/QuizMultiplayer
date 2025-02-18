@@ -8,7 +8,6 @@ namespace Quiz
 {
 	public class Skill : MonoBehaviour
 	{
-		[SerializeField] private int _price;
 		[SerializeField] private SkillType _skillType;
 		[SerializeField] private Button _skillButton;
 		[SerializeField] private TMP_Text _priceText;
@@ -16,7 +15,6 @@ namespace Quiz
 
 		private ButtonEventsHandler _buttonEventsHandler;
 
-		public int SkillPrice => _price;
 		public SkillType SkillType => _skillType;
 
 		public event Action<SkillType> SelectSkillEvent;
@@ -32,8 +30,6 @@ namespace Quiz
 				
 				return;
 			}
-			
-			_priceText.SetText($"{_price}");
 			
 			_buttonEventsHandler = _skillButton.GetComponent<ButtonEventsHandler>();
 			
@@ -61,17 +57,24 @@ namespace Quiz
 			_skillButton.interactable = false;
 			_buttonEventsHandler.TriggerTooltipActivity(true);
 		}
-
-		public void SetName(string name) => _skillNameText.SetText(name);
 		
-		public void SetupSkill(Tooltip tooltip)
+		public void SetupSkill(SkillData skillData, Tooltip tooltip)
 		{
+			SetNameText(skillData.SkillName);
+			SetPriceText(skillData.Price);
+			
 			if (_buttonEventsHandler == null)
 			{
 				return;
 			}
 			
 			_buttonEventsHandler.SetTooltip(tooltip);
+		}
+
+		public void SetNameText(string skillName) => _skillNameText.SetText(skillName);
+		private void SetPriceText(int price)
+		{
+			_priceText.SetText($"€{price}");
 		}
 
 		private void OnSkillClicked()

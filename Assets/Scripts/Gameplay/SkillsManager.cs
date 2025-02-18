@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace Quiz
@@ -9,13 +8,14 @@ namespace Quiz
 		[SerializeField] private Tooltip _tooltip;
 		[SerializeField] private Skill _selectedSkill;
 		[SerializeField] private List<Skill> _skills;
+		[SerializeField] private SkillPoolSo _skillPoolSo;
 
 		private SkillType _selectedSkillType;
 
 		public bool IsSkillUsed { get; set; }
 		public SkillType SelectedSkillType => _selectedSkillType;
 
-		public int SkillPrice => _skills.FirstOrDefault(x => x.SkillType == _selectedSkillType)!.SkillPrice;
+		public int SelectedSkillPrice => _skillPoolSo.GetSkillPrice(_selectedSkillType);
 
 		private void Awake()
 		{
@@ -26,10 +26,20 @@ namespace Quiz
 
 		private void Start()
 		{
+			var skillData = new SkillData();
+			
 			foreach (var skill in _skills)
 			{
 				skill.SelectSkillEvent += OnSkillSelected;
-				skill.SetupSkill(_tooltip);
+				
+				var skillType = skill.SkillType;
+				var skillPrice = _skillPoolSo.GetSkillPrice(skillType);
+				var skillName = _skillPoolSo.GetSkillName(skillType);
+
+				skillData.SkillName = skillName;
+				skillData.Price = skillPrice;
+				
+				skill.SetupSkill(skillData, _tooltip);
 			}
 		}
 
@@ -52,7 +62,7 @@ namespace Quiz
 		{
 			_selectedSkillType = SkillType.None;
 			
-			_selectedSkill.SetName(string.Empty);
+			_selectedSkill.SetNameText(string.Empty);
 			_selectedSkill.gameObject.SetActive(false);
 
 			var playerId = GameManager.Instance.CurrentPlayerId;
@@ -60,7 +70,8 @@ namespace Quiz
 			
 			foreach (var skill in _skills)
 			{
-				if (skill.SkillPrice > playerData.TotalPoints)
+				var skillPrice = _skillPoolSo.GetSkillPrice(skill.SkillType);
+				if (skillPrice > playerData.TotalPoints)
 				{
 					skill.Disable();
 				}
@@ -77,7 +88,9 @@ namespace Quiz
 		{
 			_selectedSkillType = skillType;
 			
-			_selectedSkill.SetName(_selectedSkillType.ToString());
+			var skillName = _skillPoolSo.GetSkillName(skillType);
+			
+			_selectedSkill.SetNameText(skillName);
 			_selectedSkill.gameObject.SetActive(true);
 		}
 
