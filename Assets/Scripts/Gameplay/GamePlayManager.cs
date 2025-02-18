@@ -216,16 +216,12 @@ namespace Quiz
 
 		private void AnswerCalculation()
 		{
-			Debug.Log($"Answers Calculation");
-			
 			var correctAnswers = GetCorrectAnswers(_questionIndex);
 			var maxAnswerPoints = GetMaxAnswerPoints(_questionIndex);
 			
 			var n = 1;
 			foreach (DictionaryEntry player in _orderedAnswersDic)
 			{
-				Debug.Log($"PlayerID: {player.Key}, Answers {player.Value}");
-				
 				var playerId = player.Key.ToString();
 				var playerAnswer = player.Value.ToString();
 				
