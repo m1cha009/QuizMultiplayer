@@ -5,6 +5,39 @@ using Unity.Netcode;
 namespace Quiz
 {
 	[Serializable]
+	public struct NetworkPLayerSkillData : INetworkSerializable
+	{
+		public SkillType[] SkillTypes;
+		public int SkillPoints;
+		
+		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+		{
+			serializer.SerializeValue(ref SkillTypes);
+			serializer.SerializeValue(ref SkillPoints);
+		}
+	}
+
+	[Serializable]
+	public struct NetworkPlayerData : INetworkSerializable
+	{
+		public FixedString128Bytes PlayerName;
+		public FixedString128Bytes PlayerAnswer;
+		public int AnswerPoints;
+		public NetworkPLayerSkillData PLayerSkillData;
+		public int TotalPoints;
+		
+		public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+		{
+			PLayerSkillData.NetworkSerialize(serializer);
+			
+			serializer.SerializeValue(ref PlayerName);
+			serializer.SerializeValue(ref PlayerAnswer);
+			serializer.SerializeValue(ref AnswerPoints);
+			serializer.SerializeValue(ref TotalPoints);
+		}
+	}
+
+	[Serializable]
 	public class PlayerData : INetworkSerializable
 	{
 		private FixedString128Bytes _playerId;
