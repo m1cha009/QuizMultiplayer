@@ -1619,7 +1619,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  _playerPrefab: {fileID: 7976543272938987026, guid: 80bd41a2be7081f43be2f698fe0ea2cd, type: 3}
+  _playerViewPrefab: {fileID: 7976543272938987026, guid: 80bd41a2be7081f43be2f698fe0ea2cd, type: 3}
   _skillsManager: {fileID: 1668408968}
 --- !u!114 &201188450
 MonoBehaviour:
@@ -6576,8 +6576,8 @@ MonoBehaviour:
   _useWebQuestions: 0
   _gameplayScreen: {fileID: 1676975944}
   _endRoundObject: {fileID: 1476416288}
-  _gameplayTimerDuration: 20
-  _endRoundTimerDuration: 10
+  _gameplayTimerDuration: 10
+  _endRoundTimerDuration: 20
 --- !u!1 &1156732609
 GameObject:
   m_ObjectHideFlags: 0

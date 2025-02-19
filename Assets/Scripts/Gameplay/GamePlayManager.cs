@@ -32,7 +32,7 @@ namespace Quiz
 		private int _questionIndex;
 
 		private readonly OrderedDictionary _orderedAnswersDic = new();
-		private Dictionary<string, PlayerData> _playerDataDic;
+		private Dictionary<string, Player> _playersDic;
 
 		private string GetQuestion(int questionIndex) => _currentQuestionsData[questionIndex].question;
 		public List<string> GetCorrectAnswers(int questionIndex) => _currentQuestionsData[questionIndex].answers.ToList();
@@ -71,7 +71,7 @@ namespace Quiz
 
 		public void OnGameplayStarted()
 		{
-			_playerDataDic = GameManager.Instance.GetPlayersData();
+			_playersDic = GameManager.Instance.GetPlayersDictionary();
 			
 			if (!IsHost) return;
 
@@ -135,7 +135,7 @@ namespace Quiz
 				
 				case InnerScreensType.Gameplay:
 					_localTimeLeft = _gameplayTimerDuration;
-					GameManager.Instance.ClearPLayerDataAnswers();
+					GameManager.Instance.ClearPlayerData();
 					
 					if (_questionIndex >= _totalQuestions)
 					{
@@ -156,8 +156,17 @@ namespace Quiz
 					if (IsHost)
 					{
 						AnswerCalculation();
+
+						var networkPlayersDataArray = new NetworkPlayerData[_playersDic.Values.Count];
 						
-						SetupEndRoundRpc(_playerDataDic.Values.ToArray());
+						var n = 0;
+						foreach (var player in _playersDic.Values)
+						{
+							networkPlayersDataArray[n] = new NetworkPlayerData(player.PlayerData);
+							n++;
+						}
+
+						SetupEndRoundRpc(networkPlayersDataArray);
 					}
 					
 					_questionIndex++;
@@ -176,7 +185,7 @@ namespace Quiz
 			{
 				_orderedAnswersDic.Clear();
 			
-				foreach (var playerId in _playerDataDic.Keys)
+				foreach (var playerId in _playersDic.Keys)
 				{
 					_orderedAnswersDic.Add(playerId, string.Empty);
 				}
@@ -186,9 +195,16 @@ namespace Quiz
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
-		private void SetupEndRoundRpc(PlayerData[] playerDataArray)
+		private void SetupEndRoundRpc(NetworkPlayerData[] networkPLayerDataArray)
 		{
-			_endRoundObject.SetupEndRoundScreen(playerDataArray);
+			var playerDataList = new List<PlayerData>();
+			foreach (var networkPlayerData in networkPLayerDataArray)
+			{
+				var playerData = new PlayerData(networkPlayerData);
+				playerDataList.Add(playerData);
+			}
+			
+			_endRoundObject.SetupEndRoundScreen(playerDataList);
 		}
 
 		[Rpc(SendTo.ClientsAndHost)]
@@ -220,16 +236,21 @@ namespace Quiz
 			var maxAnswerPoints = GetMaxAnswerPoints(_questionIndex);
 			
 			var n = 1;
-			foreach (DictionaryEntry player in _orderedAnswersDic)
+			foreach (DictionaryEntry answer in _orderedAnswersDic)
 			{
-				var playerId = player.Key.ToString();
-				var playerAnswer = player.Value.ToString();
+				var playerId = answer.Key.ToString();
+				var playerAnswer = answer.Value.ToString();
 				
-				_playerDataDic.TryGetValue(playerId, out var playerData);
-				if (playerData == null) continue;
+				_playersDic.TryGetValue(playerId, out var player);
+				if (player == null) continue;
+				
+				var playerData = player.PlayerData;
+				var playerSkillsData = player.PlayerData.PlayerSkillsData;
 
 				var isFound = correctAnswers.Contains(playerAnswer);
-				var totalPoints = -playerData.SkillPrice;
+				// var totalPoints = -playerData.SkillPrice;
+				
+				var totalPoints = 0;
 
 				if (!isFound)
 				{
@@ -243,9 +264,9 @@ namespace Quiz
 					
 					totalPoints += correctAnswerPoints;
 
-					foreach (var skillType in playerData.SkillTypes)
+					foreach (var skillType in playerSkillsData)
 					{
-						switch (skillType)
+						switch (skillType.SkillType)
 						{
 							case SkillType.None:
 								continue;
@@ -272,8 +293,10 @@ namespace Quiz
 		[Rpc(SendTo.ClientsAndHost)]
 		private void UpdateTotalPointsRpc(string playerId, int pointsGained)
 		{
-			if (_playerDataDic.TryGetValue(playerId, out var playerData))
+			if (_playersDic.TryGetValue(playerId, out var player))
 			{
+				var playerData = player.PlayerData;
+				
 				if (playerData.TotalPoints + pointsGained < 0)
 				{
 					playerData.TotalPoints = 0;

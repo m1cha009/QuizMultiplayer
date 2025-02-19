@@ -14,8 +14,7 @@ namespace Quiz
 
 		public bool IsSkillUsed { get; set; }
 		public SkillType SelectedSkillType => _selectedSkillType;
-
-		public int SelectedSkillPrice => _skillPoolSo.GetSkillPrice(_selectedSkillType);
+		public int GetSkillPrice(SkillType skillType) => _skillPoolSo.GetSkillPrice(skillType);
 
 		private void Awake()
 		{
@@ -66,12 +65,12 @@ namespace Quiz
 			_selectedSkill.gameObject.SetActive(false);
 
 			var playerId = GameManager.Instance.CurrentPlayerId;
-			var playerData = GameManager.Instance.GetPlayerData(playerId);
+			var player = GameManager.Instance.GetPlayer(playerId);
 			
 			foreach (var skill in _skills)
 			{
 				var skillPrice = _skillPoolSo.GetSkillPrice(skill.SkillType);
-				if (skillPrice > playerData.TotalPoints)
+				if (skillPrice > player.PlayerData.TotalPoints)
 				{
 					skill.Disable();
 				}
@@ -93,7 +92,5 @@ namespace Quiz
 			_selectedSkill.SetNameText(skillName);
 			_selectedSkill.gameObject.SetActive(true);
 		}
-
-
 	}
 }

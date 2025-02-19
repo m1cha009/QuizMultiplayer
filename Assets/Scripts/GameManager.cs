@@ -14,7 +14,7 @@ namespace Quiz
 		[SerializeField] private FinishScreenManager _finishScreen;
 		
 		private BaseScreens _currentBaseScreen;
-		private readonly Dictionary<string, PlayerData> _playersDataDic = new();
+		private readonly Dictionary<string, Player> _playersDic = new();
 		
 		public ISession Session { get; set; }
 		public string CurrentPlayerId => Session.CurrentPlayer.Id;
@@ -86,7 +86,7 @@ namespace Quiz
 			{
 				var playerId = player.Id;
 
-				if (_playersDataDic.ContainsKey(playerId))
+				if (_playersDic.ContainsKey(playerId))
 				{
 					continue;
 				}
@@ -105,29 +105,19 @@ namespace Quiz
 					TotalPoints = 1000
 				};
 				
-				_playersDataDic.Add(playerId, playerData);
+				_playersDic.Add(playerId, new Player(playerData));
 			}
 		}
 		
-		public Dictionary<string, PlayerData> GetPlayersData() => _playersDataDic;
+		public Dictionary<string, Player> GetPlayersDictionary() => _playersDic;
 		
-		public PlayerData GetPlayerData(string playerId) => _playersDataDic[playerId];
+		public Player GetPlayer(string playerId) => _playersDic[playerId];
 
-		public void ClearPLayerDataAnswers()
+		public void ClearPlayerData()
 		{
-			foreach (var playerData in _playersDataDic.Values)
+			foreach (var player in _playersDic.Values)
 			{
-				playerData.Answer = string.Empty;
-				playerData.AnswerPoints = 0;
-				
-				for (var i = 0; i < playerData.SkillTypes.Length; i++)
-				{
-					playerData.SkillTypes[i] = SkillType.None;
-				}
-
-				playerData.SkillIndex = 0;
-				playerData.SkillPoints = 0;
-				playerData.SkillPrice = 0;
+				player.ClearPlayer();
 			}
 		}
 		
